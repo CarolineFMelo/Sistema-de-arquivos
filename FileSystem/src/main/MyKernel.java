@@ -1,6 +1,8 @@
 package main;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Stack;
 
 /*
@@ -25,6 +27,8 @@ public class MyKernel implements Kernel {
     	this.dirAntigo = null;
     }
     
+    
+    //função não está sendo utilizada
     boolean isPathRelative(String path) {
     	if (!path.equals("")) {
 	    	if (path.charAt(0) == '/') {
@@ -34,6 +38,17 @@ public class MyKernel implements Kernel {
     	return true;
     }
     
+    //verifica se há flags na entrada do programa
+    boolean argParser(String parameters, String flag) {
+    	if(parameters.contains("-" + flag)) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
+    //pega o caminho completo do path
     String getCaminhoCompleto(Diretorio dir) {
     	Stack<String> pilha = new Stack<String>();
     	while(!dir.getNome().equals("/")) {
@@ -49,95 +64,96 @@ public class MyKernel implements Kernel {
     }
 
     public String ls(String parameters) {
-        //variável result deverá conter o que vai ser impresso na tela após comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: ls");
-        System.out.println("\tParametros: " + parameters);
-
-        //início da implementação do aluno
-    	String[] path = parameters.split("/");
-    	Diretorio curDir = null;
-    	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+    	String result = "";
+        String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        String[] path = null;
+        String[] param = parameters.split(" ");
+    	Diretorio curDir = dirRaiz;
     	
-    	if(isPathRelative(parameters)) {
-    		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-    		curDir = dirRaiz;
-    		for(int i = 1; i < index.length; i++) {
-    			curDir = curDir.buscaDiretorioPeloNome(index[i]);
-    		}
-    		if (!parameters.equals("")) {
-    			for(int i = 0; i < path.length; i++) {
-        			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-        		}
-        	}
+    	if(param.length == 2) {
+    		path = param[1].split("/");
     	}
     	else {
-    		curDir = dirRaiz;
-    		for(int i = 1; i < path.length; i++) {
-    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-    		}
+    		path = param[0].split("/");
     	}
-    	
-    	for(int i = 0; i < curDir.getFilhos().size(); i++) {
-    		result = result + curDir.getFilhos().get(i).getNome() + "\n";
-    	}
-        
-        //fim da implementação do aluno
+     	
+    	//localiza o diretorio a ser listado
+     	if(isPathRelative(parameters)) {
+     		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+     		curDir = dirRaiz;
+     		for(int i = 1; i < index.length; i++) {
+     			curDir = curDir.buscaDiretorioPeloNome(index[i]);
+     		}
+     		if (!parameters.equals("")) {
+     			if(param.length == 2) {
+	     			for(int i = 0; i < path.length; i++) {
+	         			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+	     			}
+         		}
+         	}
+     	}
+     	else {
+     		curDir = dirRaiz;
+     		for(int i = 1; i < path.length; i++) {
+     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+     		}
+     	}
+     	
+     	//lista conteúdo do diretório
+     	if(argParser(parameters, "l")) {
+     		for(int i = 0; i < curDir.getFilhos().size(); i++) {
+     			result = result.concat(curDir.getFilhos().get(i).getPermissao() + " " +
+     					curDir.getFilhos().get(i).getDataCriacaoFormatada() + " " +
+     					curDir.getFilhos().get(i).getNome() + "\n");
+         	}
+     	} else {
+     		for(int i = 0; i < curDir.getFilhos().size(); i++) {
+         		result = result.concat(curDir.getFilhos().get(i).getNome()) + " ";
+         	}
+     	}
+     	
         return result;
     }
 
     public String mkdir(String parameters) {
-    	//variável result deverá conter o que vai ser impresso na tela após comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: mkdir"); 
-        System.out.println("\tParametros: " + parameters);
-        
-    	String[] path = parameters.split("/");
-    	Diretorio curDir = null;
+    	String result = "";
+        String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        String[] path = parameters.split("/");
+    	Diretorio curDir = dirRaiz;
     	
-    	if(isPathRelative(parameters)) {
-    		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-    		curDir = dirRaiz;
-    		for(int i = 1; i < index.length; i++) {
-    			curDir = curDir.buscaDiretorioPeloNome(index[i]);
-    		}
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
-    	else {
-    		curDir = dirRaiz;
-    	}
-    
+    	
+    	//verifica existência do diretório e cria
     	for(int i = 0; i < path.length; i++) {
-//    		if (curDir.getFilhos().get(j).getNome().equals(in[i])) {
-    		if((path[i] == "") || (path[i].contains("."))) {
+    		if(path[i].contains(".")) {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     			continue;
     		}
-			if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
-				if(i == path.length - 1) {
-					result = "mkdir: " + path[i] + ": Diretorio já existe (Nenhum diretorio foi criado).";
-				}
-				break;
-			}
-    		else {
-//    			curDir.getFilhos().add(new Diretorio(path[i], curDir));
-    			curDir.criaDiretorioFilho(path[i], curDir);
-			}
-			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
+	    		if(i == path.length - 1) {
+	    			result = "mkdir: " + path[i] + ": Diretorio já existe (Nenhum diretorio foi criado).";
+	   			}
+	   			break;
+   			}
+       		else {        			
+       			curDir.criaDiretorioFilho(path[i], curDir);
+    		}
+    		curDir = curDir.buscaDiretorioPeloNome(path[i]);
     	}
     	
         return result;
     }
 
     public String cd(String parameters) {
-    	//variável result deverá conter o que vai ser impresso na tela após comando do usuário
     	String result = "";
-        String currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir;
-        System.out.println("Chamada de Sistema: cd");
-        System.out.println("\tParametros: " + parameters);
-        
-        //inicio da implementacao do aluno
+    	String currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir;
         String[] cDir = currentDir.split("/");
         String[] path = parameters.split("/");
     	Diretorio curDir = dirRaiz;
+    	dirRaiz.setPai(dirRaiz);
     	
     	//encontra o diretório atual
     	for(int i = 1; i < cDir.length; i++) {
@@ -145,28 +161,25 @@ public class MyKernel implements Kernel {
     	}
     	
     	//verifica se diretório do parâmetro existe
-    	if(!path[0].contains(".")) {
-//    	   		if (curDir.getFilhos().get(j).getNome().equals(in[i])) {
-    		for(int i = 0; i < path.length; i++) {
-    			if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
-    				curDir = curDir.buscaDiretorioPeloNome(path[i]);
-    			}
-    	    	else {
-    	   			result = path[i] + ": Diretório não existe.";
-    	   			return result;
-    			}
-       		}
+    	for(int i = 0; i < path.length; i++) {
+    		if(path[i].contains(".")) {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    			continue;
+    		}
+    		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+   			}
+       		else {        			
+       			result = path[i] + ": Diretório não existe.";
+	   			return result;
+    		}
     	}
     	
         //indica o novo diretório
 		for(int i = 0; i < path.length; i++) {
-			if(path[i].equals("..")) {
-	    		curDir = curDir.getPai();
-	    		currentDir = getCaminhoCompleto(curDir);
-	    	}
-			else if(path[i].equals(".")) {
-				continue;
-	    	}
+			if(path[i].contains(".")) {
+				currentDir = getCaminhoCompleto(curDir);
+			}
 			else {
 				if (currentDir.charAt(currentDir.length()-1) == '/') {
 					currentDir = currentDir.concat(path[i]);
@@ -180,52 +193,42 @@ public class MyKernel implements Kernel {
         //setando parte gráfica do diretorio atual
         operatingSystem.fileSystem.FileSytemSimulator.currentDir = currentDir;
 
-        //fim da implementacao do aluno
         return result;
     }
 
     public String rmdir(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: rmdir");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
+        String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
         String[] path = parameters.split("/");
-    	Diretorio curDir = null;
+    	Diretorio curDir = dirRaiz;
     	
-    	if(isPathRelative(parameters)) {
-    		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-    		curDir = dirRaiz;
-    		for(int i = 1; i < index.length; i++) {
-    			curDir = curDir.buscaDiretorioPeloNome(index[i]);
-    		}
-    		if (!parameters.equals("")) {
-    			for(int i = 0; i < path.length; i++) {
-        			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-        		}
-        	}
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
-    	else {
-    		curDir = dirRaiz;
-    		for(int i = 1; i < path.length; i++) {
+    	
+    	//localiza o diretório a ser removido
+    	for(int i = 0; i < path.length; i++) {
+    		if(path[i].contains(".")) {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    			continue;
+    		}
+    		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
+    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi removido)";
+    			break;
+    		}
+    		else {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     		}
     	}
-
-		if(curDir != null) {
-			if(curDir.getFilhos().isEmpty()) {
-				curDir.getPai().getFilhos().remove(curDir);
-			}
-			else {
-				result = "rmdir: Diretório: " + parameters + " possui arquivos e/ou diretórios. (Nada foi removido)";
-			}
+    	
+    	if(curDir.getFilhos().isEmpty()) {
+			curDir.getPai().getFilhos().remove(curDir);
 		}
 		else {
-			result = "rmdir: Diretório: " + path + " não existe. (Nada foi removido)";
-			}
+			result = "rmdir: Diretório: " + parameters + " possui arquivos e/ou diretórios. (Nada foi removido)";
+		}
     	
-        //fim da implementacao do aluno
         return result;
     }
 
@@ -309,13 +312,74 @@ public class MyKernel implements Kernel {
     }
 
     public String chmod(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: chmod");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+    	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        String[] in = parameters.split(" ");
+        String[] path;
+    	Diretorio curDir = dirRaiz;
+    	Arquivo file = null;
+    	
+    	//separa o caminho no parâmetro
+    	if(in.length == 3) {
+    		path = in[2].split("/");
+    	} 
+    	else {
+    		path = in[1].split("/");
+    	}
+    	
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//localiza o objeto a ser alterado
+    	for(int i = 0; i < path.length; i++) {
+    		if(path[i].contains(".")) {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    			continue;
+    		}
+    		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
+    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi alterado)";
+    			break;
+    		}
+    		else {
+    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    		}
+    	}
+    	
+		String newMod = in[0];
+		int digits[] = new int[3];
+		int READ = 4, WRITE = 2, EXECUTE = 1;
+		String oldPer = curDir.getPermissao();
+		String newPer = Character.toString(oldPer.charAt(0));
+		
+		digits[0] = Character.digit(newMod.charAt(0), 10);
+		digits[1] = Character.digit(newMod.charAt(1), 10);
+		digits[2] = Character.digit(newMod.charAt(2), 10);
+		
+		//seta nova permissão
+		for(int i = 0; i < 3; i++) {
+			if((digits[i] & READ) == READ){
+    			newPer = newPer.concat("r");
+    		}
+			else {
+    			newPer = newPer.concat("-");
+    		}
+   			if((digits[i] & WRITE) == WRITE) {
+   				newPer = newPer.concat("w");
+   			}
+   			else {
+   				newPer = newPer.concat("-");
+    		}
+   			if((digits[i] & EXECUTE) == EXECUTE) {
+   				newPer = newPer.concat("x");
+    		}
+   					else {
+    			newPer = newPer.concat("-");
+    		}
+		}
+		curDir.setPermissao(newPer);
+        
         return result;
     }
 
@@ -357,9 +421,10 @@ public class MyKernel implements Kernel {
         String result = "";
         System.out.println("Chamada de Sistema: dump");
         System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+   
+        //inicio
+        //fim
+        
         return result;
     }
 

@@ -26,6 +26,7 @@ public class Diretorio {
     public Diretorio(String nome, Diretorio pai) {
     	this.nome = nome;
         this.pai = pai;
+        this.permissao = "drwxr-xr-x";
         this.dataCriacao 
                 = new Date(System.currentTimeMillis());
         SimpleDateFormat sdf 
@@ -88,7 +89,21 @@ public class Diretorio {
     public void setPermissao(String permissao) {
         this.permissao = permissao;
     }
-    
-    
+
+	public ArrayList<Arquivo> getArquivos() {
+		return arquivos;
+	}
+
+	public void setArquivos(ArrayList<Arquivo> arquivos) {
+		this.arquivos = arquivos;
+	}
+
+	public String getDataCriacaoFormatada() {
+		return dataCriacaoFormatada;
+	}
+
+	public void setDataCriacaoFormatada(String dataCriacaoFormatada) {
+		this.dataCriacaoFormatada = dataCriacaoFormatada;
+	}
     
 }
