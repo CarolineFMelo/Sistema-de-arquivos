@@ -70,34 +70,45 @@ public class MyKernel implements Kernel {
         String[] param = parameters.split(" ");
     	Diretorio curDir = dirRaiz;
     	
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//verifica parâmetros
+    	//path = param[param.length-1].split("/");
+    	
     	if(param.length == 2) {
     		path = param[1].split("/");
     	}
-    	else {
+    	else if((param.length == 1) && (!argParser(param[0], "l"))) {
     		path = param[0].split("/");
     	}
-     	
-    	//localiza o diretorio a ser listado
-     	if(isPathRelative(parameters)) {
-     		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-     		curDir = dirRaiz;
-     		for(int i = 1; i < index.length; i++) {
-     			curDir = curDir.buscaDiretorioPeloNome(index[i]);
-     		}
-     		if (!parameters.equals("")) {
-     			if(param.length == 2) {
-	     			for(int i = 0; i < path.length; i++) {
-	         			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-	     			}
-         		}
-         	}
-     	}
-     	else {
-     		curDir = dirRaiz;
-     		for(int i = 1; i < path.length; i++) {
-     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-     		}
-     	}
+    	else {
+    		path = "".split("/");
+    	}
+    	
+    	//encontra caminho do parâmetro
+	    for(int i = 0; i < path.length; i++) {
+	   		if(path[i] == "") {
+	   			continue;
+	   		}
+	   		if(path[i].contains(".")) {
+	    		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+	   			continue;
+	   		}
+	   		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
+	    		if(i == path.length - 1) {
+	    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+	    			break;
+		   		}
+	   		}
+	   		else {        			
+       			result = path[i].concat(": Diretório não existe.");
+	   			return result;
+    		}
+    		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    	}
      	
      	//lista conteúdo do diretório
      	if(argParser(parameters, "l")) {
@@ -128,6 +139,9 @@ public class MyKernel implements Kernel {
     	
     	//verifica existência do diretório e cria
     	for(int i = 0; i < path.length; i++) {
+    		if(path[i] == "") {
+    			continue;
+    		}
     		if(path[i].contains(".")) {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     			continue;
@@ -135,8 +149,8 @@ public class MyKernel implements Kernel {
     		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
 	    		if(i == path.length - 1) {
 	    			result = "mkdir: " + path[i] + ": Diretorio já existe (Nenhum diretorio foi criado).";
+	    			break;
 	   			}
-	   			break;
    			}
        		else {        			
        			curDir.criaDiretorioFilho(path[i], curDir);
@@ -170,7 +184,7 @@ public class MyKernel implements Kernel {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
    			}
        		else {        			
-       			result = path[i] + ": Diretório não existe.";
+       			result = path[i].concat(": Diretório não existe.");
 	   			return result;
     		}
     	}
@@ -316,20 +330,25 @@ public class MyKernel implements Kernel {
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
         String[] in = parameters.split(" ");
         String[] path;
+        String newMod = null;
     	Diretorio curDir = dirRaiz;
     	Arquivo file = null;
-    	
-    	//separa o caminho no parâmetro
-    	if(in.length == 3) {
-    		path = in[2].split("/");
-    	} 
-    	else {
-    		path = in[1].split("/");
-    	}
     	
     	//encontra o diretório atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//verifica parâmetros
+    	//path = param[param.length-1].split("/");
+    	
+    	if(in.length == 3) {
+    		path = in[2].split("/");
+    		newMod = in[1];
+    	}
+    	else {
+    		path = in[1].split("/");
+    		newMod = in[0];
     	}
     	
     	//localiza o objeto a ser alterado
@@ -338,8 +357,8 @@ public class MyKernel implements Kernel {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     			continue;
     		}
-    		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi alterado)";
+    		else if(curDir.buscaDiretorioPeloNome(path[i]) == null) {
+    			result = "chmod: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
     			break;
     		}
     		else {
@@ -347,10 +366,12 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
-		String newMod = in[0];
 		int digits[] = new int[3];
 		int READ = 4, WRITE = 2, EXECUTE = 1;
+		
+		//talvez tenha que mudar isso pra quando mexer com arquivo
 		String oldPer = curDir.getPermissao();
+		
 		String newPer = Character.toString(oldPer.charAt(0));
 		
 		digits[0] = Character.digit(newMod.charAt(0), 10);
@@ -379,6 +400,13 @@ public class MyKernel implements Kernel {
     		}
 		}
 		curDir.setPermissao(newPer);
+		
+		//seta nova permissão recursivamente
+		if(argParser(parameters, "R")) {
+			for(int i = 0; i < curDir.getFilhos().size(); i++) {
+				curDir.getFilhos().get(i).setPermissao(newPer);
+         	}
+		}
         
         return result;
     }
