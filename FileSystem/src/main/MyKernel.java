@@ -330,35 +330,25 @@ public class MyKernel implements Kernel {
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
         String[] in = parameters.split(" ");
         String[] path;
-        String newMod = null;
     	Diretorio curDir = dirRaiz;
     	Arquivo file = null;
     	
+    	//seta flags opcionais - modificam o fluxo do programa
+        boolean recursiveMode = false;
+        if (in[0].equals("-R")) recursiveMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+    	
+        //verifica parâmetros
+    	path = in[in.length-1].split("/");
+        
     	//encontra o diretório atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//verifica parâmetros
-    	//path = param[param.length-1].split("/");
-    	
-    	if(in.length == 3) {
-    		path = in[2].split("/");
-    		newMod = in[1];
-    	}
-    	else {
-    		path = in[1].split("/");
-    		newMod = in[0];
-    	}
-    	
     	//localiza o objeto a ser alterado
     	for(int i = 0; i < path.length; i++) {
-    		if(path[i].contains(".")) {
-    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-    			continue;
-    		}
-    		else if(curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "chmod: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
+    		if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
+    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi alterado)";
     			break;
     		}
     		else {
@@ -366,12 +356,10 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
+    	String newMod = recursiveMode == true ? in[1] : in[0];
 		int digits[] = new int[3];
 		int READ = 4, WRITE = 2, EXECUTE = 1;
-		
-		//talvez tenha que mudar isso pra quando mexer com arquivo
 		String oldPer = curDir.getPermissao();
-		
 		String newPer = Character.toString(oldPer.charAt(0));
 		
 		digits[0] = Character.digit(newMod.charAt(0), 10);
@@ -402,11 +390,11 @@ public class MyKernel implements Kernel {
 		curDir.setPermissao(newPer);
 		
 		//seta nova permissão recursivamente
-		if(argParser(parameters, "R")) {
-			for(int i = 0; i < curDir.getFilhos().size(); i++) {
-				curDir.getFilhos().get(i).setPermissao(newPer);
-         	}
-		}
+		if (recursiveMode) {
+    		for (int i = 0; i < curDir.getFilhos().size(); i++) {
+    			curDir.getFilhos().get(i).setPermissao(newPer);
+    		}
+    	}
         
         return result;
     }
