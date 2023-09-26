@@ -70,12 +70,11 @@ public class MyKernel implements Kernel {
         String[] param = parameters.split(" ");
     	Diretorio curDir = dirRaiz;
     	
-    	//encontra o diretório atual
-    	for(int i = 1; i < currentDir.length; i++) {
-    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
-    	}
+    	// seta flags opcionais - modificam o fluxo do programa
+        boolean listMode = false;
+        if (param[0].equals("-l")) listMode = true; // usamos a posição 0 porque o -l só pode aparecer nesta posição
     	
-    	//verifica parâmetros
+        //verifica parâmetros
     	//path = param[param.length-1].split("/");
     	
     	if(param.length == 2) {
@@ -86,6 +85,11 @@ public class MyKernel implements Kernel {
     	}
     	else {
     		path = "".split("/");
+    	}
+        
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
     	//encontra caminho do parâmetro
@@ -111,7 +115,7 @@ public class MyKernel implements Kernel {
     	}
      	
      	//lista conteúdo do diretório
-     	if(argParser(parameters, "l")) {
+	    if(listMode) {
      		for(int i = 0; i < curDir.getFilhos().size(); i++) {
      			result = result.concat(curDir.getFilhos().get(i).getPermissao() + " " +
      					curDir.getFilhos().get(i).getDataCriacaoFormatada() + " " +
