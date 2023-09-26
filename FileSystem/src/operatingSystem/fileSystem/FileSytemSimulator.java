@@ -1,6 +1,8 @@
 package operatingSystem.fileSystem;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
 import operatingSystem.Kernel;
 
 public class FileSytemSimulator extends javax.swing.JFrame {
@@ -92,11 +94,31 @@ public class FileSytemSimulator extends javax.swing.JFrame {
             
             //eliminando ">" do inicio do comando...
             command = command.substring((this.base.length()+FileSytemSimulator.currentDir.length()+2), command.length());
+            
+            this.listOfCommands.add(command);
+            this.position = listOfCommands.size();
+            
             dispararComando( command );
             
             this.escreverAreaDeTexto();
             this.escreverDiretorio();
         }
+        if(evt.getKeyCode() == KeyEvent.VK_UP){
+        	if (position > 0) {
+        		this.escreverDiretorio();
+                this.txtCommand.setText(this.txtCommand.getText().concat(this.listOfCommands.get(--position)));
+        	}
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_DOWN){
+        	if ((position + 1) == this.listOfCommands.size()) {
+        		this.escreverDiretorio();
+        	}
+        	else if (position < this.listOfCommands.size()) {
+        		this.escreverDiretorio();
+        		this.txtCommand.setText(this.txtCommand.getText().concat(this.listOfCommands.get(++position)));
+        	}
+      }
+        
         
 }//GEN-LAST:event_txtCommandKeyPressed
 
@@ -119,6 +141,8 @@ public class FileSytemSimulator extends javax.swing.JFrame {
     }
   
     private String lastCommand = "";
+    private ArrayList<String> listOfCommands = new ArrayList<String>();
+    private int position;
     private String lastResult = "";
     private String base = "";
     public static String currentDir = "/";
@@ -239,7 +263,7 @@ public class FileSytemSimulator extends javax.swing.JFrame {
             this.textArea.append(this.lastCommand);
         else
             this.textArea.append(this.lastCommand + "\n" + this.lastResult);
-        
+               
         this.lastCommand = "";
         this.lastResult = "";
     }
