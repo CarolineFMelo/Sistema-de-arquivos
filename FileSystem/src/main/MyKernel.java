@@ -262,59 +262,39 @@ public class MyKernel implements Kernel {
     }
 
     public String mv(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: mv");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        String[] path = parameters.split(" ");
-    	Diretorio curDir = null;
+        String[] in = parameters.split(" ");
+    	Diretorio curDir = dirRaiz;
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-
-//    	if(isPathRelative(parameters)) {
-//    		String[] index = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-//    		curDir = dirRaiz;
-//    		for(int i = 1; i < index.length; i++) {
-//    			curDir = curDir.buscaDiretorioPeloNome(index[i]);
-//    		}
-//    		if (!parameters.equals("")) {
-//    			for(int i = 0; i < path.length; i++) {
-//        			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-//        		}
-//        	}
-//    	}
-//    	else {
-//    		curDir = dirRaiz;
-//    		for(int i = 1; i < path.length; i++) {
-//    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-//    		}
-//    	}
-    	
-    	String origem = path[0];
-    	String destino = path[1];
+    	String[] origem = in[0].split("/");
+    	String[] destino = in[1].split("/");
     	Diretorio dirOrigem = dirRaiz;
     	Diretorio dirDestino = dirRaiz;
     	Diretorio dirAux = null;
     	
-    	for(int i = 0; i < origem.length(); i++) {
-    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem);
-    		
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	for(int i = 0; i < destino.length(); i++) {
-    		dirDestino = dirDestino.buscaDiretorioPeloNome(destino);
+    	//encontra o diretório de origem
+    	for(int i = 0; i < origem.length; i++) {
+    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     	}
     	
-    	for(int i = 0; i < destino.length(); i++) {
+    	//encontra o diretório de destino
+    	for(int i = 0; i < destino.length; i++) {
+    		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
+    	}
+    	
+    	//move origem para destino
+    	for(int i = 0; i < destino.length; i++) {
     		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
     			dirAux = dirOrigem.getPai().getFilhos().remove(i);
     		}
     	}
-    	
     	dirDestino.getFilhos().add(dirAux);
     	
-        //fim da implementacao do aluno
         return result;
     }
 
@@ -352,7 +332,7 @@ public class MyKernel implements Kernel {
     	//localiza o objeto a ser alterado
     	for(int i = 0; i < path.length; i++) {
     		if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi alterado)";
+    			result = "rmdir: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
     			break;
     		}
     		else {
