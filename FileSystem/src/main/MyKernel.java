@@ -279,21 +279,45 @@ public class MyKernel implements Kernel {
     	
     	//encontra o diretório de origem
     	for(int i = 0; i < origem.length; i++) {
-    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    		if(origem[i].contains(".")) {
+    			dirOrigem = curDir.buscaDiretorioPeloNome(origem[i]);
+    		}
+    		else {
+    			dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    		}
     	}
     	
     	//encontra o diretório de destino
     	for(int i = 0; i < destino.length; i++) {
-    		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
-    	}
-    	
-    	//move origem para destino
-    	for(int i = 0; i < destino.length; i++) {
-    		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
-    			dirAux = dirOrigem.getPai().getFilhos().remove(i);
+    		if(destino[i].contains(".")) {
+    			dirDestino = curDir.buscaDiretorioPeloNome(destino[i]);
+    		}
+    		else if(dirDestino.buscaDiretorioPeloNome(destino[i]) == null){
+    			if(i == destino.length - 1) {
+    				dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]); 
+    			}
+    			else {
+    				result = "mv: Diretório destino não existe. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
+    		else {
+    			dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
     		}
     	}
-    	dirDestino.getFilhos().add(dirAux);
+    	
+    	if(dirOrigem == dirDestino) {
+    		//renomear
+    		dirOrigem.setNome(destino[destino.length-1]);
+    	}
+    	else {
+    		//mover
+    		for(int i = 0; i < destino.length; i++) {
+        		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
+        			dirAux = dirOrigem.getPai().getFilhos().remove(i);
+        		}
+        	}
+        	dirDestino.getFilhos().add(dirAux);
+    	}
     	
         return result;
     }
@@ -332,7 +356,7 @@ public class MyKernel implements Kernel {
     	//localiza o objeto a ser alterado
     	for(int i = 0; i < path.length; i++) {
     		if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
+    			result = "chmod: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
     			break;
     		}
     		else {
