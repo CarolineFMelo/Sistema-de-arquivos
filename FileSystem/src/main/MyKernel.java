@@ -27,17 +27,6 @@ public class MyKernel implements Kernel {
     	this.dirAntigo = null;
     }
     
-    
-    //função não está sendo utilizada
-    boolean isPathRelative(String path) {
-    	if (!path.equals("")) {
-	    	if (path.charAt(0) == '/') {
-	    		return false;
-	    	}
-    	}
-    	return true;
-    }
-    
     //verifica se há flags na entrada do programa
     boolean argParser(String parameters, String flag) {
     	if(parameters.contains("-" + flag)) {
@@ -94,9 +83,9 @@ public class MyKernel implements Kernel {
     	
     	//encontra caminho do parâmetro
 	    for(int i = 0; i < path.length; i++) {
-	   		if(path[i] == "") {
-	   			continue;
-	   		}
+	    	if(path[i] == "") {
+    			continue;
+    		}
 	   		if(path[i].contains(".")) {
 	    		curDir = curDir.buscaDiretorioPeloNome(path[i]);
 	   			continue;
@@ -144,6 +133,8 @@ public class MyKernel implements Kernel {
     	//verifica existência do diretório e cria
     	for(int i = 0; i < path.length; i++) {
     		if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
     			continue;
     		}
     		if(path[i].contains(".")) {
@@ -180,6 +171,11 @@ public class MyKernel implements Kernel {
     	
     	//verifica se diretório do parâmetro existe
     	for(int i = 0; i < path.length; i++) {
+    		if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
+    		}
     		if(path[i].contains(".")) {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     			continue;
@@ -194,8 +190,13 @@ public class MyKernel implements Kernel {
     	}
     	
         //indica o novo diretório
-		for(int i = 0; i < path.length; i++) {
-			if(path[i].contains(".")) {
+    	for(int i = 0; i < path.length; i++) {
+    		if(path[i] == "") {
+    			//caminho absoluto
+    			currentDir = "/";
+    			continue;
+    		}
+    		else if(path[i].contains(".")) {
 				currentDir = getCaminhoCompleto(curDir);
 			}
 			else {
@@ -227,6 +228,11 @@ public class MyKernel implements Kernel {
     	
     	//localiza o diretório a ser removido
     	for(int i = 0; i < path.length; i++) {
+    		if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
+    		}
     		if(path[i].contains(".")) {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
     			continue;
@@ -279,11 +285,9 @@ public class MyKernel implements Kernel {
     	
     	//encontra o diretório de origem
     	for(int i = 0; i < origem.length; i++) {
-    		if(origem[i].contains(".")) {
-    			dirOrigem = curDir.buscaDiretorioPeloNome(origem[i]);
-    		}
-    		else {
-    			dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    		if(dirOrigem == null) {
+    			return result = "mv: Diretório origem não existe. (Nenhuma alteração foi efetuada)";
     		}
     	}
     	
