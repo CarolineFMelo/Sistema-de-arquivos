@@ -270,7 +270,6 @@ public class MyKernel implements Kernel {
     public String mv(String parameters) {
         String result = "";
         String[] in = parameters.split(" ");
-    	Diretorio curDir = dirRaiz;
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
     	String[] origem = in[0].split("/");
     	String[] destino = in[1].split("/");
@@ -278,12 +277,11 @@ public class MyKernel implements Kernel {
     	Diretorio dirDestino = dirRaiz;
     	Diretorio dirAux = null;
     	
-    	//encontra o diretório atual
+    	//passa diretório atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
-    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(currentDir[i]);
     	}
-    	
-    	//encontra o diretório de origem
+    	//encontra diretório de origem pelo parâmetro
     	for(int i = 0; i < origem.length; i++) {
     		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     		if(dirOrigem == null) {
@@ -291,21 +289,20 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
-    	//encontra o diretório de destino
+    	//passa diretório atual para destino
+    	for(int i = 1; i < currentDir.length; i++) {
+    		dirDestino = dirDestino.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	//encontra diretório de destino pelo parâmetro
     	for(int i = 0; i < destino.length; i++) {
-    		if(destino[i].contains(".")) {
-    			dirDestino = curDir.buscaDiretorioPeloNome(destino[i]);
-    		}
-    		else if(dirDestino.buscaDiretorioPeloNome(destino[i]) == null){
+    		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
+    		if(dirDestino == null) {
     			if(i == destino.length - 1) {
-    				dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]); 
+    				dirDestino = dirDestino.buscaDiretorioPeloNome(destino[destino.length-1]); 
     			}
     			else {
     				result = "mv: Diretório destino não existe. (Nenhuma alteração foi efetuada)";
     			}
-    		}
-    		else {
-    			dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
     		}
     	}
     	
@@ -315,7 +312,7 @@ public class MyKernel implements Kernel {
     	}
     	else {
     		//mover
-    		for(int i = 0; i < destino.length; i++) {
+    		for(int i = 0; i < dirOrigem.getPai().getFilhos().size(); i++) {
         		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
         			dirAux = dirOrigem.getPai().getFilhos().remove(i);
         		}
