@@ -283,9 +283,16 @@ public class MyKernel implements Kernel {
     	}
     	//encontra diretório de origem pelo parâmetro
     	for(int i = 0; i < origem.length; i++) {
-    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     		if(dirOrigem == null) {
     			return result = "mv: Diretório origem não existe. (Nenhuma alteração foi efetuada)";
+    		}
+    		else if(origem[i] == "") {
+    			//caminho absoluto
+    			dirOrigem = dirRaiz;
+    			continue;
+    		}
+    		else {
+        		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     		}
     	}
     	
@@ -295,7 +302,6 @@ public class MyKernel implements Kernel {
     	}
     	//encontra diretório de destino pelo parâmetro
     	for(int i = 0; i < destino.length; i++) {
-    		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
     		if(dirDestino == null) {
     			if(i == destino.length - 1) {
     				dirDestino = dirDestino.buscaDiretorioPeloNome(destino[destino.length-1]); 
@@ -303,6 +309,14 @@ public class MyKernel implements Kernel {
     			else {
     				result = "mv: Diretório destino não existe. (Nenhuma alteração foi efetuada)";
     			}
+    		}
+    		else if(destino[i] == "") {
+    			//caminho absoluto
+    			dirDestino = dirRaiz;
+    			continue;
+    		}
+    		else {
+        		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
     		}
     	}
     	
