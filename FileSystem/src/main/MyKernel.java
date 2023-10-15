@@ -469,13 +469,37 @@ public class MyKernel implements Kernel {
     }
 
     public String cat(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: cat");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+    	String result = "";
+        String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        Diretorio curDir = dirRaiz;
+        String[] path = parameters.split("/");
+        
+        //encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//verifica e imprime conteúdo do arquivo
+        for(int i = 0; i < path.length; i++) {
+        	if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
+    		}
+        	else if (path[i].matches(regexArq)) {
+        		//arquivo localizado
+        		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
+        			return result = result.concat(curDir.getArquivos().get(i).getConteudo());
+        		}
+        		else {
+        			return result = "cat: Arquivo não existe.";
+        		}
+            } 
+        	else {
+        		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+        	}
+        }
+    	
         return result;
     }
 
