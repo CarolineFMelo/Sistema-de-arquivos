@@ -363,7 +363,9 @@ public class MyKernel implements Kernel {
         String[] in = parameters.split(" ");
         String[] path;
     	Diretorio curDir = dirRaiz;
-    	Arquivo file = null;
+    	String oldPer = "";
+    	String newPer = "";
+    	String objeto = null;
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean recursiveMode = false;
@@ -379,20 +381,39 @@ public class MyKernel implements Kernel {
     	
     	//localiza o objeto a ser alterado
     	for(int i = 0; i < path.length; i++) {
-    		if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "chmod: Diretório: " + path[i] + " não existe. (Nada foi alterado)";
-    			break;
+        	if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
     		}
-    		else {
-    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
-    		}
-    	}
+        	else if (path[i].matches(regexArq)) {
+        		//arquivo localizado
+        		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
+        			//para mudar permissão do arquivo
+        			oldPer = curDir.getArquivos().get(i).getPermissao();
+        			objeto = "arq";
+        		}
+        		else {
+        			return result = "chmod: Arquivo não existe. (Nada foi alterado)";
+        		}
+            } 
+        	else if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
+        		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+        		if(i == path.length - 1) {
+    				//para mudar permissão do diretório
+    				oldPer = curDir.getPermissao();
+    				objeto = "dir";
+        		}
+        	}
+        	else {
+        		return result = "chmod: Diretório não existe. (Nada foi alterado)";
+        	}
+        }
     	
     	String newMod = recursiveMode == true ? in[1] : in[0];
+    	newPer = Character.toString(oldPer.charAt(0));
 		int digits[] = new int[3];
 		int READ = 4, WRITE = 2, EXECUTE = 1;
-		String oldPer = curDir.getPermissao();
-		String newPer = Character.toString(oldPer.charAt(0));
 		
 		digits[0] = Character.digit(newMod.charAt(0), 10);
 		digits[1] = Character.digit(newMod.charAt(1), 10);
@@ -415,11 +436,17 @@ public class MyKernel implements Kernel {
    			if((digits[i] & EXECUTE) == EXECUTE) {
    				newPer = newPer.concat("x");
     		}
-   					else {
+   			else {
     			newPer = newPer.concat("-");
     		}
 		}
-		curDir.setPermissao(newPer);
+		
+		if(objeto.equals("arq")) {
+			curDir.getArquivos().get(path.length-1).setPermissao(newPer);
+		}
+		else {
+			curDir.setPermissao(newPer);
+		}
 		
 		//seta nova permissão recursivamente
 		if (recursiveMode) {
