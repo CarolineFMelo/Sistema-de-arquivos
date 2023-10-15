@@ -40,6 +40,10 @@ public class Diretorio {
     public void criaDiretorioFilho(String nome, Diretorio pai) {
     	this.filhos.add(new Diretorio(nome, pai));
     }
+    
+    public void criaArquivo(String nome, Diretorio pai, String conteudo) {
+	    this.arquivos.add(new Arquivo(nome, pai, conteudo));
+	}
    
     public Diretorio buscaDiretorioPeloNome(String nome) {
         if (nome.equals(".")){
@@ -56,6 +60,15 @@ public class Diretorio {
             }
         }
         return null;
+    }
+    
+    public Arquivo buscaArquivoPeloNome(String nome) {
+       for (Arquivo arq : arquivos) {
+    	   if (arq.getNome().equals(nome)) {
+    		   return arq;
+           }
+       }
+       return null;
     }
 
     public Diretorio getPai() {

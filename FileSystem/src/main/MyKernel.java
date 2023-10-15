@@ -20,6 +20,7 @@ public class MyKernel implements Kernel {
 	public Diretorio dirRaiz = new Diretorio("/", null);
 	public Diretorio dirAtual;
 	public Diretorio dirAntigo;
+	public String regexArq = "[a-zA-Z]+\\.[a-zA-Z]+";
 
     public MyKernel() {
     	this.dirRaiz = new Diretorio("/", null);
@@ -423,13 +424,39 @@ public class MyKernel implements Kernel {
     }
 
     public String createfile(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: createfile");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+    	String result = "";
+        String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        Diretorio curDir = dirRaiz;
+        String[] param = parameters.split(" ", 2);
+        String path[] = param[0].split("/");
+        String content = param[1];
+        
+        //encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//verifica e cria arquivo
+        for(int i = 0; i < path.length; i++) {
+        	if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
+    		}
+        	else if (path[i].matches(regexArq)) {
+        		//arquivo localizado
+        		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
+        			return result = "createfile: Arquivo já existe. Não foi possível cria-lo";
+        		}
+        		else {
+        			curDir.criaArquivo(path[i], curDir, content);
+        		}
+            } 
+        	else {
+        		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+        	}
+        }
+    	
         return result;
     }
 

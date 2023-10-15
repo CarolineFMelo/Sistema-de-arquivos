@@ -13,7 +13,7 @@ public class Arquivo {
 	private String nome;
 	private String permissao;
 	
-	public Arquivo(String nome, Diretorio pai) {
+	public Arquivo(String nome, Diretorio pai, String conteudo) {
 		this.nome = nome;
 		this.dirPai = pai;
 		this.permissao = "-rw-r--r--";
@@ -23,20 +23,8 @@ public class Arquivo {
         	= new SimpleDateFormat("MM dd HH:mm:ss");
 		this.dataCriacaoFormatada 
         	= sdf.format(dataCriacao);
+		this.conteudo = conteudo;
 	}
-	
-	public void criaArquivo(String nome, Diretorio pai) {
-		
-	}
-	
-//	public Arquivo buscaArquivoPeloNome(String nomeDir, String nomeFile) {
-//		Diretorio dir = null;
-//		dir = dir.buscaDiretorioPeloNome(nomeDir);
-//		if(dir.getArquivos() != null) {
-//			
-//		}
-//        return null;
-//	}
 	
 	public String getConteudo() {
 		return conteudo;
