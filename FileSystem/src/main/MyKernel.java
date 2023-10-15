@@ -111,9 +111,17 @@ public class MyKernel implements Kernel {
      					curDir.getFilhos().get(i).getDataCriacaoFormatada() + " " +
      					curDir.getFilhos().get(i).getNome() + "\n");
          	}
+     		for(int i = 0; i < curDir.getArquivos().size(); i++) {
+     			result = result.concat(curDir.getArquivos().get(i).getPermissao() + " " +
+     					curDir.getArquivos().get(i).getDataCriacaoFormatada() + " " +
+     					curDir.getArquivos().get(i).getNome() + "\n");
+         	}
      	} else {
      		for(int i = 0; i < curDir.getFilhos().size(); i++) {
          		result = result.concat(curDir.getFilhos().get(i).getNome()) + " ";
+         	}
+     		for(int i = 0; i < curDir.getArquivos().size(); i++) {
+         		result = result.concat(curDir.getArquivos().get(i).getNome()) + " ";
          	}
      	}
      	
