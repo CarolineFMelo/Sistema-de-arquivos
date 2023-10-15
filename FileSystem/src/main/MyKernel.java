@@ -255,11 +255,11 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
-    	if(curDir.getFilhos().isEmpty()) {
+    	if(curDir.getFilhos().isEmpty() && curDir.getArquivos().isEmpty()) {
 			curDir.getPai().getFilhos().remove(curDir);
 		}
 		else {
-			result = "rmdir: Diretório: " + parameters + " possui arquivos e/ou diretórios. (Nada foi removido)";
+			result = "rmdir: Diretório possui arquivos e/ou diretórios. (Nada foi removido)";
 		}
     	
         return result;
