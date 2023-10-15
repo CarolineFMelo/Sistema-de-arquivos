@@ -443,17 +443,23 @@ public class MyKernel implements Kernel {
 		
 		if(objeto.equals("arq")) {
 			curDir.getArquivos().get(path.length-1).setPermissao(newPer);
+			if(recursiveMode) {
+				return result = "chmod: Não é possível aplicar recursividade na permissão de arquivos (Somente permissão do arquivo alterada)";
+			}
 		}
 		else {
 			curDir.setPermissao(newPer);
+			//seta nova permissão recursivamente
+			if (recursiveMode) {
+	    		for (int i = 0; i < curDir.getFilhos().size(); i++) {
+	    			curDir.getFilhos().get(i).setPermissao(newPer);
+	    		}
+	    		for (int i = 0; i < curDir.getArquivos().size(); i++) {
+	    			newPer = "-" + newPer.substring(1);
+	    			curDir.getArquivos().get(i).setPermissao(newPer);
+	    		}
+	    	}
 		}
-		
-		//seta nova permissão recursivamente
-		if (recursiveMode) {
-    		for (int i = 0; i < curDir.getFilhos().size(); i++) {
-    			curDir.getFilhos().get(i).setPermissao(newPer);
-    		}
-    	}
         
         return result;
     }
