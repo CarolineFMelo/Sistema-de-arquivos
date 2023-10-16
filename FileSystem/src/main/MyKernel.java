@@ -65,8 +65,6 @@ public class MyKernel implements Kernel {
         if (param[0].equals("-l")) listMode = true; // usamos a posição 0 porque o -l só pode aparecer nesta posição
     	
         //verifica parâmetros
-    	//path = param[param.length-1].split("/");
-    	
     	if(param.length == 2) {
     		path = param[1].split("/");
     	}
@@ -247,7 +245,7 @@ public class MyKernel implements Kernel {
     			continue;
     		}
     		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretório: " + path + " não existe. (Nada foi removido)";
+    			result = "rmdir: Diretório não existe. (Nada foi removido)";
     			break;
     		}
     		else {
@@ -347,14 +345,63 @@ public class MyKernel implements Kernel {
     }
 
     public String rm(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: rm");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
-        return result;
+    	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+        String[] in = parameters.split(" ");
+        String[] path;
+    	Diretorio curDir = dirRaiz;
+    	
+    	//seta flags opcionais - modificam o fluxo do programa
+        boolean removeDirMode = false;
+        if (in[0].equals("-R")) removeDirMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+    	
+        //verifica parâmetros
+    	path = in[in.length-1].split("/");
+        
+    	//encontra o diretório atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//localiza o objeto a ser alterado
+    	for(int i = 0; i < path.length; i++) {
+        	if(path[i] == "") {
+    			//caminho absoluto
+    			curDir = dirRaiz;
+    			continue;
+    		}
+        	else if (path[i].matches(regexArq)) {
+        		//arquivo localizado
+        		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
+        			//remove arquivo
+        			for(int j = 0; j < curDir.getArquivos().size(); j++) {
+        				if(curDir.getArquivos().get(j).getNome().equals(path[i])) {
+        					curDir.getArquivos().remove(j);
+        				}
+        			}
+        		}
+        		else {
+        			return result = "rm: Arquivo não existe (Nenhum arquivo ou diretório foi removido)";
+        		}
+            } 
+        	else if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
+        		curDir = curDir.buscaDiretorioPeloNome(path[i]);
+        		if(i == path.length - 1) {
+        			if(removeDirMode) {
+        				//remove diretório e todo seu conteúdo, caso flag ativada
+        				curDir.getPai().getFilhos().remove(curDir);
+            			break;
+        			}
+        			else {
+        				return result = "rm: " + path[i] + ": é um diretorio (Nenhum arquivo ou diretório foi removido)";
+        			}
+        		}
+        	}
+        	else {
+        		return result = "rm: Diretório nao existe (Nenhum arquivo ou diretório foi removido)";
+        	}
+        }
+    	return result;
     }
 
     public String chmod(String parameters) {
