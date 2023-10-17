@@ -283,23 +283,37 @@ public class MyKernel implements Kernel {
     	Diretorio dirOrigem = dirRaiz;
     	Diretorio dirDestino = dirRaiz;
     	Diretorio dirAux = null;
+    	Arquivo arqOrigem = null;
+    	Arquivo arqAux = null;
+    	String nomeArq = null;
     	
     	//passa diretório atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
     		dirOrigem = dirOrigem.buscaDiretorioPeloNome(currentDir[i]);
     	}
+    	
     	//encontra diretório de origem pelo parâmetro
     	for(int i = 0; i < origem.length; i++) {
-    		if(dirOrigem == null) {
-    			return result = "mv: Diretório origem não existe. (Nenhuma alteração foi efetuada)";
-    		}
-    		else if(origem[i] == "") {
+    		if(origem[i] == "") {
     			//caminho absoluto
     			dirOrigem = dirRaiz;
     			continue;
     		}
+    		else if(origem[i].matches(regexArq)) {
+    			if(dirOrigem.buscaArquivoPeloNome(origem[i]) != null) {
+    				arqOrigem = dirOrigem.buscaArquivoPeloNome(origem[i]);
+    			}
+    			else {
+    				return result = "mv: Arquivo origem não existe. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
     		else {
-        		dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    			if(dirOrigem.buscaDiretorioPeloNome(origem[i]) != null) {
+    				dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    			}
+    			else {
+    				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+    			}
     		}
     	}
     	
@@ -307,38 +321,67 @@ public class MyKernel implements Kernel {
     	for(int i = 1; i < currentDir.length; i++) {
     		dirDestino = dirDestino.buscaDiretorioPeloNome(currentDir[i]);
     	}
+    	
     	//encontra diretório de destino pelo parâmetro
     	for(int i = 0; i < destino.length; i++) {
-    		if(dirDestino == null) {
-    			if(i == destino.length - 1) {
-    				dirDestino = dirDestino.buscaDiretorioPeloNome(destino[destino.length-1]); 
-    			}
-    			else {
-    				result = "mv: Diretório destino não existe. (Nenhuma alteração foi efetuada)";
-    			}
-    		}
-    		else if(destino[i] == "") {
+    		if(destino[i] == "") {
     			//caminho absoluto
     			dirDestino = dirRaiz;
     			continue;
     		}
+    		else if(destino[i].matches(regexArq)) {
+    			if(dirDestino.buscaArquivoPeloNome(destino[i]) == null) {
+    				nomeArq = destino[i]; 
+    			}
+    			else {
+    				return result = "mv: nome ja existente. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
     		else {
-        		dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
+    			if(dirDestino.buscaDiretorioPeloNome(destino[i]) != null) {
+    				dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
+    			}
+    			else {
+    				if(i == destino.length - 1) {
+    					dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]);
+        			}
+        			else {
+        				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+        			}
+    			}
     		}
     	}
     	
-    	if(dirOrigem == dirDestino) {
-    		//renomear
-    		dirOrigem.setNome(destino[destino.length-1]);
+    	//remove ou move objetos
+    	if(arqOrigem != null) {
+    		if(nomeArq != null) {
+        		//renomeia arquivo
+        		arqOrigem.setNome(nomeArq);
+        	}
+    		else {
+    			//move arquivo
+    			for(int i = 0; i < dirOrigem.getArquivos().size(); i++) {
+        			if(dirOrigem.getArquivos().get(i).getNome().equals(arqOrigem.getNome())) {
+        				arqAux = dirOrigem.getArquivos().remove(i);
+        			}
+        		}
+        		dirDestino.getArquivos().add(arqAux);
+    		}
     	}
     	else {
-    		//mover
-    		for(int i = 0; i < dirOrigem.getPai().getFilhos().size(); i++) {
-        		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
-        			dirAux = dirOrigem.getPai().getFilhos().remove(i);
-        		}
+    		if(dirOrigem == dirDestino) {
+        		//renomeia diretório
+        		dirOrigem.setNome(destino[destino.length-1]);
         	}
-        	dirDestino.getFilhos().add(dirAux);
+        	else {
+        		//move diretório
+        		for(int i = 0; i < dirOrigem.getPai().getFilhos().size(); i++) {
+            		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
+            			dirAux = dirOrigem.getPai().getFilhos().remove(i);
+            		}
+            	}
+            	dirDestino.getFilhos().add(dirAux);
+        	}
     	}
     	
         return result;
