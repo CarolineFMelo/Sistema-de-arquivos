@@ -264,13 +264,103 @@ public class MyKernel implements Kernel {
     }
 
     public String cp(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: cp");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+    	String result = "";
+        String[] in = parameters.split(" ");
+    	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
+    	String[] origem = in[0].split("/");
+    	String[] destino = in[1].split("/");
+    	Diretorio dirOrigem = dirRaiz;
+    	Diretorio dirDestino = dirRaiz;
+    	Arquivo arqOrigem = null;
+    	String nomeArq = null;
+    	
+    	//passa diretório atual para origem
+    	for(int i = 1; i < currentDir.length; i++) {
+    		dirOrigem = dirOrigem.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//encontra diretório de origem pelo parâmetro
+    	for(int i = 0; i < origem.length; i++) {
+    		if(origem[i] == "") {
+    			//caminho absoluto
+    			dirOrigem = dirRaiz;
+    			continue;
+    		}
+    		else if(origem[i].matches(regexArq)) {
+    			if(dirOrigem.buscaArquivoPeloNome(origem[i]) != null) {
+    				arqOrigem = dirOrigem.buscaArquivoPeloNome(origem[i]);
+    			}
+    			else {
+    				return result = "mv: Arquivo origem não existe. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
+    		else {
+    			if(dirOrigem.buscaDiretorioPeloNome(origem[i]) != null) {
+    				dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
+    			}
+    			else {
+    				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
+    	}
+    	
+    	//passa diretório atual para destino
+    	for(int i = 1; i < currentDir.length; i++) {
+    		dirDestino = dirDestino.buscaDiretorioPeloNome(currentDir[i]);
+    	}
+    	
+    	//encontra diretório de destino pelo parâmetro
+    	for(int i = 0; i < destino.length; i++) {
+    		if(destino[i] == "") {
+    			//caminho absoluto
+    			dirDestino = dirRaiz;
+    			continue;
+    		}
+    		else if(destino[i].matches(regexArq)) {
+    			if(dirDestino.buscaArquivoPeloNome(destino[i]) == null) {
+    				nomeArq = destino[i]; 
+    			}
+    			else {
+    				return result = "mv: nome ja existente. (Nenhuma alteração foi efetuada)";
+    			}
+    		}
+    		else {
+    			if(dirDestino.buscaDiretorioPeloNome(destino[i]) != null) {
+    				dirDestino = dirDestino.buscaDiretorioPeloNome(destino[i]);
+    			}
+    			else {
+    				if(i == destino.length - 1) {
+    					dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]);
+        			}
+        			else {
+        				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+        			}
+    			}
+    		}
+    	}
+    	
+    	//remove ou move objetos
+    	if(arqOrigem != null) {
+    		if(nomeArq != null) {
+        		//renomeia arquivo
+        		arqOrigem.setNome(nomeArq);
+        	}
+    		else {
+    			//copia arquivo
+    			dirDestino.getArquivos().add(arqOrigem);
+    		}
+    	}
+    	else {
+    		if(dirOrigem == dirDestino) {
+        		//renomeia diretório
+        		dirOrigem.setNome(destino[destino.length-1]);
+        	}
+        	else {
+        		//copia diretório
+            	dirDestino.getFilhos().add(dirOrigem);
+        	}
+    	}
+    	
         return result;
     }
 
@@ -650,11 +740,7 @@ public class MyKernel implements Kernel {
     }
 
     public String info() {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
-        String result = "";
-        System.out.println("Chamada de Sistema: info");
-        System.out.println("\tParametros: sem parametros");
-
+    	String result = "";
         //nome do aluno
         String name = "Caroline Melo";
         //numero de matricula
