@@ -13,7 +13,12 @@ import java.util.Date;
  *
  * @author Douglas
  */
-public class Diretorio {
+public class Diretorio implements Cloneable {
+	
+	@Override
+	public Diretorio clone() throws CloneNotSupportedException {
+		return (Diretorio) super.clone();
+	}
     
     private Diretorio pai;
     private ArrayList<Diretorio> filhos;

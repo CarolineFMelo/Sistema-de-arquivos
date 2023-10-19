@@ -3,8 +3,10 @@ package main;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Stack;
 
+import fileFunctions.FileManager;
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -357,7 +359,7 @@ public class MyKernel implements Kernel {
         	}
         	else {
         		//copia diretório
-            	dirDestino.getFilhos().add(dirOrigem);
+        		dirDestino.getFilhos().add(dirOrigem);
         	}
     	}
     	
@@ -717,13 +719,11 @@ public class MyKernel implements Kernel {
     }
 
     public String batch(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: batch");
-        System.out.println("\tParametros: " + parameters);
-
-        //inicio da implementacao do aluno
-        //fim da implementacao do aluno
+        
+        ArrayList<String> arquivo = FileManager.stringReader(parameters);
+        System.out.println(arquivo.toString());
+        
         return result;
     }
 

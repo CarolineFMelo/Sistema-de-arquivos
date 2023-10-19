@@ -1,0 +1,5 @@
+mkdir nome
+mkdir home
+createfile /home/carol.txt ola teste
+mv /home/carol.txt /nome
+info
