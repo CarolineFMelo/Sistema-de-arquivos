@@ -1,8 +1,5 @@
 package main;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -349,7 +346,13 @@ public class MyKernel implements Kernel {
         	}
     		else {
     			//copia arquivo
-    			dirDestino.getArquivos().add(arqOrigem);
+    			 try {
+                     Arquivo cloneArq = (Arquivo) arqOrigem.clone();
+                     cloneArq.setDirPai(dirDestino);
+                     dirDestino.getArquivos().add(cloneArq);
+                 } catch (CloneNotSupportedException e) {
+                     return result = "Erro ao copiar arquivo";
+                 }
     		}
     	}
     	else {
@@ -359,7 +362,13 @@ public class MyKernel implements Kernel {
         	}
         	else {
         		//copia diretório
-        		dirDestino.getFilhos().add(dirOrigem);
+        	    try {
+                    Diretorio cloneDir = (Diretorio) dirOrigem.clone();
+                    cloneDir.setPai(dirDestino);
+                    dirDestino.getFilhos().add(cloneDir);
+                } catch (CloneNotSupportedException e) {
+                    return result = "Erro ao copiar diretorio";
+                }
         	}
     	}
     	

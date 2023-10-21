@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Arquivo {
+public class Arquivo implements Cloneable {
 	
 	private String conteudo;
 	private Diretorio dirPai;
@@ -26,6 +26,19 @@ public class Arquivo {
 		this.conteudo = conteudo;
 	}
 	
+	@Override
+	public Arquivo clone() throws CloneNotSupportedException {
+		return (Arquivo) super.clone();
+	}
+	
+	public Diretorio getDirPai() {
+		return dirPai;
+	}
+
+	public void setDirPai(Diretorio dirPai) {
+		this.dirPai = dirPai;
+	}
+
 	public String getConteudo() {
 		return conteudo;
 	}

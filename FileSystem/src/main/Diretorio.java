@@ -14,11 +14,6 @@ import java.util.Date;
  * @author Douglas
  */
 public class Diretorio implements Cloneable {
-	
-	@Override
-	public Diretorio clone() throws CloneNotSupportedException {
-		return (Diretorio) super.clone();
-	}
     
     private Diretorio pai;
     private ArrayList<Diretorio> filhos;
@@ -41,6 +36,11 @@ public class Diretorio implements Cloneable {
         this.filhos = new ArrayList<>();
         this.arquivos = new ArrayList<>();
     }
+    
+    @Override
+	public Diretorio clone() throws CloneNotSupportedException {
+		return (Diretorio) super.clone();
+	}
     
     public void criaDiretorioFilho(String nome, Diretorio pai) {
     	this.filhos.add(new Diretorio(nome, pai));
