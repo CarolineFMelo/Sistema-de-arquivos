@@ -730,10 +730,66 @@ public class MyKernel implements Kernel {
     public String batch(String parameters) {
         String result = "";
         
-        ArrayList<String> arquivo = FileManager.stringReader(parameters);
-        System.out.println(arquivo.toString());
+        //ArrayList<String> arquivo = FileManager.stringReader(parameters);
+        ArrayList<String> file = FileManager.stringReader("C:\\Users\\cferr\\workspace\\comandos.txt");
+       
+        if (file == null) {
+        	return result = "Arquivo não existe.";
+        }
         
-        return result;
+        for(int i = 0; i < file.size(); i++) {
+        	String[] line = file.get(i).split(" ", 2);
+        	String comando = line[0];
+        	String param = null;
+        	
+        	if(line.length > 1) {
+        		param = line[1];
+        	}
+        	
+        	switch(comando) {
+	        	case "ls":
+	        		ls(param);
+	        		break;
+	        	case "mkdir":
+	        		mkdir(param);
+	        		break;
+	        	case "cd":
+	        		cd(param);
+	        		break;
+	        	case "rmdir":
+	        		rmdir(param);
+	        		break;
+	        	case "cp":
+	        		cp(param);
+	        		break;
+	        	case "mv":
+	        		mv(param);
+	        		break;
+	        	case "rm":
+	        		rm(param);
+	        		break;
+	        	case "chmod":
+	        		chmod(param);
+	        		break;
+	        	case "createfile":
+	        		createfile(param);
+	        		break;
+	        	case "cat":
+	        		cat(param);
+	        		break;
+	        	case "batch":
+	        		batch(param);
+	        		break;
+	        	case "dump":
+	        		dump(param);
+	        		break;
+	        	case "info":
+	        		info();
+	        		break;
+        	}
+        }
+        
+        return result = "Comandos executados.";
     }
 
     public String dump(String parameters) {

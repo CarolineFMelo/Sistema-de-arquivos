@@ -34,17 +34,19 @@ public class FileManager {
             buffRead.close();
             return text;
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } catch (IOException ex) {
-            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
-            try {
-                buffRead.close();
-            } catch (IOException ex) {
-                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        	if (buffRead != null) {
+	            try {
+	                buffRead.close();
+	            } catch (IOException ex) {
+	                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+	            }
+        	}
         }
     }   
     
