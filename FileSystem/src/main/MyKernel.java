@@ -797,7 +797,76 @@ public class MyKernel implements Kernel {
 
     public String dump(String parameters) {
         String result = "";
+        Stack<String> pilha = new Stack<String>();
+        Diretorio curDir = dirRaiz;
+        String textCom = "";
+        String textPer = "";
         
+        //cria ou abre arquivo para dump
+        FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", textCom);
+        //FileManager.writer(parameters, textCom);
+        
+        //cria diretórios filhos
+        for(Diretorio dir : curDir.getFilhos()) {
+        	textCom = "mkdir " + dir.getNome();
+        	FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
+        	//FileManager.writerAppend(parameters, textCom + "\n");
+        	if(!dir.getPermissao().equals("drwxr-xr-x")) {
+        		String auxPer = dir.getPermissao();
+        		String per = "";
+        		int cont = 0;
+        		
+        		for(int i = 1; i < auxPer.length(); i += 3) {
+        		    String subPer = auxPer.substring(i, i + 3);
+        		    if(subPer.contains("r")) {
+        		    	cont = cont + 4;
+        		    }
+        		    if(subPer.contains("w")) {
+        		    	cont = cont + 2;
+        		    }
+        		    if(subPer.contains("x")) {
+        		    	cont = cont + 1;
+        		    }
+        		    per = per + cont;
+        		    cont = 0;
+        		}
+        		
+        		textPer = "chmod " + per + " " + dir.getNome();
+        		FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
+        		//FileManager.writerAppend(parameters, textPer + "\n");
+        	}
+        }
+        
+        //cria arquivos
+        for(Arquivo arq : curDir.getArquivos()) {
+        	textCom = "createfile " + arq.getNome() + " " + arq.getConteudo();
+        	FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
+        	//FileManager.writerAppend(parameters, textCom + "\n");
+        	if(!arq.getPermissao().equals("-rw-r--r--")) {
+        		String auxPer = arq.getPermissao();
+        		String per = "";
+        		int cont = 0;
+        		
+        		for(int i = 1; i < auxPer.length(); i += 3) {
+        		    String subPer = auxPer.substring(i, i + 3);
+        		    if(subPer.contains("r")) {
+        		    	cont = cont + 4;
+        		    }
+        		    if(subPer.contains("w")) {
+        		    	cont = cont + 2;
+        		    }
+        		    if(subPer.contains("x")) {
+        		    	cont = cont + 1;
+        		    }
+        		    per = per + cont;
+        		    cont = 0;
+        		}
+
+        		textPer = "chmod " + per + " " + arq.getNome();
+        		FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
+        		//FileManager.writerAppend(parameters, textPer + "\n");
+        	}
+        }
         
         return result;
     }
