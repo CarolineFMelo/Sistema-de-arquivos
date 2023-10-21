@@ -730,13 +730,16 @@ public class MyKernel implements Kernel {
     public String batch(String parameters) {
         String result = "";
         
+        //abre o arquivo
         //ArrayList<String> arquivo = FileManager.stringReader(parameters);
         ArrayList<String> file = FileManager.stringReader("C:\\Users\\cferr\\workspace\\comandos.txt");
        
+        //verifica leitura do arquivo
         if (file == null) {
         	return result = "Arquivo não existe.";
         }
         
+        //executa comandos do arquivo
         for(int i = 0; i < file.size(); i++) {
         	String[] line = file.get(i).split(" ", 2);
         	String comando = line[0];
@@ -793,13 +796,8 @@ public class MyKernel implements Kernel {
     }
 
     public String dump(String parameters) {
-        //variavel result deverah conter o que vai ser impresso na tela apos comando do usuário
         String result = "";
-        System.out.println("Chamada de Sistema: dump");
-        System.out.println("\tParametros: " + parameters);
-   
-        //inicio
-        //fim
+        
         
         return result;
     }
