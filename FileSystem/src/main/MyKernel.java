@@ -581,7 +581,11 @@ public class MyKernel implements Kernel {
         		//arquivo localizado
         		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
         			//para mudar permissão do arquivo
-        			oldPer = curDir.getArquivos().get(i).getPermissao();
+        			for(int j = 0; j < curDir.getArquivos().size(); j++) {
+        				if(curDir.getArquivos().get(j).getNome().equals(path[i])) {
+        					oldPer = curDir.getArquivos().get(j).getPermissao();
+        				}
+        			}
         			objeto = "arq";
         		}
         		else {
@@ -633,7 +637,11 @@ public class MyKernel implements Kernel {
 		}
 		
 		if(objeto.equals("arq")) {
-			curDir.getArquivos().get(path.length-1).setPermissao(newPer);
+			for(int j = 0; j < curDir.getArquivos().size(); j++) {
+				if(curDir.getArquivos().get(j).getNome().equals(path[path.length-1])) {
+					curDir.getArquivos().get(j).setPermissao(newPer);
+				}
+			}
 			if(recursiveMode) {
 				return result = "chmod: Não é possível aplicar recursividade na permissão de arquivos (Somente permissão do arquivo alterada)";
 			}
@@ -713,7 +721,11 @@ public class MyKernel implements Kernel {
         	else if (path[i].matches(regexArq)) {
         		//arquivo localizado
         		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
-        			return result = result.concat(curDir.getArquivos().get(i).getConteudo());
+        			for(int j = 0; j < curDir.getArquivos().size(); j++) {
+        				if(curDir.getArquivos().get(j).getNome().equals(path[path.length-1])) {
+        					return result = result.concat(curDir.getArquivos().get(j).getConteudo());
+        				}
+        			}
         		}
         		else {
         			return result = "cat: Arquivo não existe.";
@@ -797,78 +809,122 @@ public class MyKernel implements Kernel {
 
     public String dump(String parameters) {
         String result = "";
-        Stack<String> pilha = new Stack<String>();
         Diretorio curDir = dirRaiz;
-        String textCom = "";
-        String textPer = "";
         
-        //cria ou abre arquivo para dump
-        FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", textCom);
-        //FileManager.writer(parameters, textCom);
+        //FileManager.writer(parameters, result);
+        FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", result);
         
-        //cria diretórios filhos
-        for(Diretorio dir : curDir.getFilhos()) {
-        	textCom = "mkdir " + dir.getNome();
-        	FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
-        	//FileManager.writerAppend(parameters, textCom + "\n");
-        	if(!dir.getPermissao().equals("drwxr-xr-x")) {
-        		String auxPer = dir.getPermissao();
-        		String per = "";
-        		int cont = 0;
-        		
-        		for(int i = 1; i < auxPer.length(); i += 3) {
-        		    String subPer = auxPer.substring(i, i + 3);
-        		    if(subPer.contains("r")) {
-        		    	cont = cont + 4;
-        		    }
-        		    if(subPer.contains("w")) {
-        		    	cont = cont + 2;
-        		    }
-        		    if(subPer.contains("x")) {
-        		    	cont = cont + 1;
-        		    }
-        		    per = per + cont;
-        		    cont = 0;
-        		}
-        		
-        		textPer = "chmod " + per + " " + dir.getNome();
-        		FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
-        		//FileManager.writerAppend(parameters, textPer + "\n");
-        	}
-        }
-        
-        //cria arquivos
-        for(Arquivo arq : curDir.getArquivos()) {
-        	textCom = "createfile " + arq.getNome() + " " + arq.getConteudo();
-        	FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
-        	//FileManager.writerAppend(parameters, textCom + "\n");
-        	if(!arq.getPermissao().equals("-rw-r--r--")) {
-        		String auxPer = arq.getPermissao();
-        		String per = "";
-        		int cont = 0;
-        		
-        		for(int i = 1; i < auxPer.length(); i += 3) {
-        		    String subPer = auxPer.substring(i, i + 3);
-        		    if(subPer.contains("r")) {
-        		    	cont = cont + 4;
-        		    }
-        		    if(subPer.contains("w")) {
-        		    	cont = cont + 2;
-        		    }
-        		    if(subPer.contains("x")) {
-        		    	cont = cont + 1;
-        		    }
-        		    per = per + cont;
-        		    cont = 0;
-        		}
-
-        		textPer = "chmod " + per + " " + arq.getNome();
-        		FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
-        		//FileManager.writerAppend(parameters, textPer + "\n");
-        	}
-        }
+        //chama função recursiva
+        recursiveDump(curDir, "", parameters);
         
         return result;
+    }
+    
+    //percorre o sistema de arquivos e monta o dump
+    public void recursiveDump(Diretorio node, String curPath, String parameters) {
+    	 String textCom = "";
+         String textPer = "";
+         Stack<String> pilha = new Stack<String>();
+    	
+    	//condição de parada da recursão
+    	if(node == null ) {
+    		 for(int i = 0; i < pilha.size(); i++) {
+    				FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", pilha.pop() + "\n");
+    		 }
+    		return;
+    	}
+    	
+    	curPath += node.getNome();
+    	
+    	//verifica se o diretório atual tem arquivos
+    	if(!node.getArquivos().isEmpty()) {
+    		for(Arquivo arq : node.getArquivos()) {
+    			//cria arquivo
+    			if(curPath.equals("/")) {
+    				textCom = "createfile " + curPath + arq.getNome() + " " + arq.getConteudo();
+    			}
+    			else {
+    				textCom = "createfile " + curPath + "/" + arq.getNome() + " " + arq.getConteudo();
+    			}
+    			
+    			pilha.push(textCom);
+    			//FileManager.writerAppend(parameters, textCom + "\n");
+            	//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
+            	
+            	//verifica permissão do arquivo
+            	if(!arq.getPermissao().equals("-rw-r--r--")) {
+            		String auxPer = arq.getPermissao();
+            		String per = "";
+            		int cont = 0;
+            		
+            		for(int i = 1; i < auxPer.length(); i += 3) {
+            		    String subPer = auxPer.substring(i, i + 3);
+            		    if(subPer.contains("r")) {
+            		    	cont = cont + 4;
+            		    }
+            		    if(subPer.contains("w")) {
+            		    	cont = cont + 2;
+            		    }
+            		    if(subPer.contains("x")) {
+            		    	cont = cont + 1;
+            		    }
+            		    per = per + cont;
+            		    cont = 0;
+            		}
+            		textPer = "chmod " + per + " " + curPath + "/" + arq.getNome();
+            		
+            		pilha.push(textPer);
+            		//FileManager.writerAppend(parameters, textPer + "\n");
+            		//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
+            	}
+    		}
+    	}
+    	
+    	//verifica se o diretório atual tem diretórios filhos
+    	if(node.getFilhos().isEmpty()) {
+    		//cria diretório filho
+    		textCom = "mkdir " + curPath + "/" + node.getNome();
+    		pilha.push(textCom);
+    		
+    		//FileManager.writerAppend(parameters, textCom + "\n");
+        	//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
+        	
+        	//verifica permissão do diretório
+        	if(!node.getPermissao().equals("drwxr-xr-x")) {
+        		String auxPer = node.getPermissao();
+        		String per = "";
+        		int cont = 0;
+        		
+        		for(int i = 1; i < auxPer.length(); i += 3) {
+        		    String subPer = auxPer.substring(i, i + 3);
+        		    if(subPer.contains("r")) {
+        		    	cont = cont + 4;
+        		    }
+        		    if(subPer.contains("w")) {
+        		    	cont = cont + 2;
+        		    }
+        		    if(subPer.contains("x")) {
+        		    	cont = cont + 1;
+        		    }
+        		    per = per + cont;
+        		    cont = 0;
+        		}
+        		textPer = "chmod " + per + " " + curPath + "/" + node.getNome();
+        		
+        		pilha.push(textPer);
+        		//FileManager.writerAppend(parameters, textPer + "\n");
+        		//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
+        	}
+	    }
+    	else if(!node.getNome().equals("/")) {
+    		curPath += "/";
+    	}
+    	
+    	//percorre o sistema de arquivos com recursão
+    	for(int i = 0; i < node.getFilhos().size(); i++) {
+    		recursiveDump(node.getFilhos().get(i), curPath, parameters);
+    	}
+    	
     }
 
     public String info() {
