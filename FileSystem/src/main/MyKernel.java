@@ -810,27 +810,31 @@ public class MyKernel implements Kernel {
     public String dump(String parameters) {
         String result = "";
         Diretorio curDir = dirRaiz;
+        Stack<String> pilha = new Stack<String>();
         
         //FileManager.writer(parameters, result);
         FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", result);
         
         //chama função recursiva
-        recursiveDump(curDir, "", parameters);
+        recursiveDump(curDir, "", pilha);
+        
+        int pilhaSize = pilha.size();
+        
+        for(int i = 0; i < pilhaSize; i++) {
+        	//FileManager.writerAppend(parameters, pilha.pop() + "\n");
+			FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", pilha.pop() + "\n");
+        }
         
         return result;
     }
     
     //percorre o sistema de arquivos e monta o dump
-    public void recursiveDump(Diretorio node, String curPath, String parameters) {
+    public void recursiveDump(Diretorio node, String curPath, Stack<String> pilha) {
     	 String textCom = "";
          String textPer = "";
-         Stack<String> pilha = new Stack<String>();
     	
     	//condição de parada da recursão
     	if(node == null ) {
-    		 for(int i = 0; i < pilha.size(); i++) {
-    				FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", pilha.pop() + "\n");
-    		 }
     		return;
     	}
     	
@@ -839,6 +843,7 @@ public class MyKernel implements Kernel {
     	//verifica se o diretório atual tem arquivos
     	if(!node.getArquivos().isEmpty()) {
     		for(Arquivo arq : node.getArquivos()) {
+    			
     			//cria arquivo
     			if(curPath.equals("/")) {
     				textCom = "createfile " + curPath + arq.getNome() + " " + arq.getConteudo();
@@ -846,11 +851,8 @@ public class MyKernel implements Kernel {
     			else {
     				textCom = "createfile " + curPath + "/" + arq.getNome() + " " + arq.getConteudo();
     			}
-    			
     			pilha.push(textCom);
-    			//FileManager.writerAppend(parameters, textCom + "\n");
-            	//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
-            	
+    			
             	//verifica permissão do arquivo
             	if(!arq.getPermissao().equals("-rw-r--r--")) {
             		String auxPer = arq.getPermissao();
@@ -872,23 +874,18 @@ public class MyKernel implements Kernel {
             		    cont = 0;
             		}
             		textPer = "chmod " + per + " " + curPath + "/" + arq.getNome();
-            		
             		pilha.push(textPer);
-            		//FileManager.writerAppend(parameters, textPer + "\n");
-            		//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
             	}
     		}
     	}
     	
     	//verifica se o diretório atual tem diretórios filhos
     	if(node.getFilhos().isEmpty()) {
+    		
     		//cria diretório filho
     		textCom = "mkdir " + curPath + "/" + node.getNome();
     		pilha.push(textCom);
     		
-    		//FileManager.writerAppend(parameters, textCom + "\n");
-        	//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textCom + "\n");
-        	
         	//verifica permissão do diretório
         	if(!node.getPermissao().equals("drwxr-xr-x")) {
         		String auxPer = node.getPermissao();
@@ -910,10 +907,7 @@ public class MyKernel implements Kernel {
         		    cont = 0;
         		}
         		textPer = "chmod " + per + " " + curPath + "/" + node.getNome();
-        		
         		pilha.push(textPer);
-        		//FileManager.writerAppend(parameters, textPer + "\n");
-        		//FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", textPer + "\n");
         	}
 	    }
     	else if(!node.getNome().equals("/")) {
@@ -922,7 +916,7 @@ public class MyKernel implements Kernel {
     	
     	//percorre o sistema de arquivos com recursão
     	for(int i = 0; i < node.getFilhos().size(); i++) {
-    		recursiveDump(node.getFilhos().get(i), curPath, parameters);
+    		recursiveDump(node.getFilhos().get(i), curPath, pilha);
     	}
     	
     }
