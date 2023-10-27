@@ -19,7 +19,7 @@ public class MyKernel implements Kernel {
 	public Diretorio dirRaiz = new Diretorio("/", null);
 	public Diretorio dirAtual;
 	public Diretorio dirAntigo;
-	public String regexArq = "[a-zA-Z]+\\.[a-zA-Z]+";
+	public String regexArq = "\\S+\\.[^\\s]+";
 
     public MyKernel() {
     	this.dirRaiz = new Diretorio("/", null);
@@ -61,7 +61,7 @@ public class MyKernel implements Kernel {
     	
     	// seta flags opcionais - modificam o fluxo do programa
         boolean listMode = false;
-        if (param[0].equals("-l")) listMode = true; // usamos a posição 0 porque o -l só pode aparecer nesta posição
+        if (param[0].equals("-l") || param[0].equals("-L")) listMode = true; // usamos a posição 0 porque o -l só pode aparecer nesta posição
     	
         //verifica parâmetros
     	if(param.length == 2) {
@@ -483,7 +483,7 @@ public class MyKernel implements Kernel {
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean removeDirMode = false;
-        if (in[0].equals("-R")) removeDirMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+        if (in[0].equals("-R") || in[0].equals("-r")) removeDirMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
     	
         //verifica parâmetros
     	path = in[in.length-1].split("/");
@@ -546,7 +546,7 @@ public class MyKernel implements Kernel {
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean recursiveMode = false;
-        if (in[0].equals("-R")) recursiveMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+        if (in[0].equals("-R") || in[0].equals("-r")) recursiveMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
     	
         //verifica parâmetros
     	path = in[in.length-1].split("/");
