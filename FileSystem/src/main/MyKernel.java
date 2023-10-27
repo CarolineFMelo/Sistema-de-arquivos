@@ -195,24 +195,10 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
-        //indica o novo diretório
-    	for(int i = 0; i < path.length; i++) {
-    		if(path[i] == "") {
-    			//caminho absoluto
-    			currentDir = "/";
-    			continue;
-    		}
-    		else if(path[i].contains(".")) {
-				currentDir = getCaminhoCompleto(curDir);
-			}
-			else {
-				if (currentDir.charAt(currentDir.length()-1) == '/') {
-					currentDir = currentDir.concat(path[i]);
-				}
-				else {
-					currentDir = currentDir.concat("/" + path[i]);
-				}
-    		}
+    	//indica o novo diretório
+    	currentDir = getCaminhoCompleto(curDir);
+    	if(currentDir.length() > 1) {
+    		currentDir = currentDir.substring(0, currentDir.length() - 1);
     	}
 		
         //setando parte gráfica do diretorio atual
@@ -693,6 +679,9 @@ public class MyKernel implements Kernel {
         		}
             } 
         	else {
+        		if(curDir.buscaDiretorioPeloNome(path[i]) == null) {
+        			return result = "createfile: Diretorio nao existe. Não foi possível criar arquivo";
+        		}
         		curDir = curDir.buscaDiretorioPeloNome(path[i]);
         	}
         }
