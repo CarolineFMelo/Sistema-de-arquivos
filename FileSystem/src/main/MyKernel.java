@@ -27,7 +27,7 @@ public class MyKernel implements Kernel {
     	this.dirAntigo = null;
     }
     
-    //verifica se há flags na entrada do programa
+    //verifica se ha flags na entrada do programa
     boolean argParser(String parameters, String flag) {
     	if(parameters.contains("-" + flag)) {
     		return true;
@@ -61,9 +61,9 @@ public class MyKernel implements Kernel {
     	
     	// seta flags opcionais - modificam o fluxo do programa
         boolean listMode = false;
-        if (param[0].equals("-l") || param[0].equals("-L")) listMode = true; // usamos a posição 0 porque o -l só pode aparecer nesta posição
+        if (param[0].equals("-l") || param[0].equals("-L")) listMode = true; // usamos a posicao 0 porque o -l so pode aparecer nesta posicao
     	
-        //verifica parâmetros
+        //verifica parametros
     	if(param.length == 2) {
     		path = param[1].split("/");
     	}
@@ -74,12 +74,12 @@ public class MyKernel implements Kernel {
     		path = "".split("/");
     	}
         
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//encontra caminho do parâmetro
+    	//encontra caminho do parametro
 	    for(int i = 0; i < path.length; i++) {
 	    	if(path[i] == "") {
     			continue;
@@ -95,13 +95,13 @@ public class MyKernel implements Kernel {
 		   		}
 	   		}
 	   		else {        			
-       			result = path[i].concat(": Diretório não existe.");
+       			result = path[i].concat(": Diretorio nao existe.");
 	   			return result;
     		}
     		curDir = curDir.buscaDiretorioPeloNome(path[i]);
     	}
      	
-     	//lista conteúdo do diretório
+     	//lista conteudo do diretorio
 	    if(listMode) {
      		for(int i = 0; i < curDir.getFilhos().size(); i++) {
      			result = result.concat(curDir.getFilhos().get(i).getPermissao() + " " +
@@ -131,12 +131,12 @@ public class MyKernel implements Kernel {
         String[] path = parameters.split("/");
     	Diretorio curDir = dirRaiz;
     	
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//verifica existência do diretório e cria
+    	//verifica existencia do diretorio e cria
     	for(int i = 0; i < path.length; i++) {
     		if(path[i] == "") {
     			//caminho absoluto
@@ -149,7 +149,7 @@ public class MyKernel implements Kernel {
     		}
     		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
 	    		if(i == path.length - 1) {
-	    			result = "mkdir: " + path[i] + ": Diretorio já existe (Nenhum diretorio foi criado).";
+	    			result = "mkdir: " + path[i] + ": Diretorio nao existe (Nenhum diretorio foi criado).";
 	    			break;
 	   			}
    			}
@@ -170,12 +170,12 @@ public class MyKernel implements Kernel {
     	Diretorio curDir = dirRaiz;
     	dirRaiz.setPai(dirRaiz);
     	
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < cDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(cDir[i]);
     	}
     	
-    	//verifica se diretório do parâmetro existe
+    	//verifica se diretorio do parametro existe
     	for(int i = 0; i < path.length; i++) {
     		if(path[i] == "") {
     			//caminho absoluto
@@ -190,18 +190,18 @@ public class MyKernel implements Kernel {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
    			}
        		else {        			
-       			result = path[i].concat(": Diretório não existe.");
+       			result = path[i].concat(": Diretorio nao existe.");
 	   			return result;
     		}
     	}
     	
-    	//indica o novo diretório
+    	//indica o novo diretorio
     	currentDir = getCaminhoCompleto(curDir);
     	if(currentDir.length() > 1) {
     		currentDir = currentDir.substring(0, currentDir.length() - 1);
     	}
 		
-        //setando parte gráfica do diretorio atual
+        //setando parte grafica do diretorio atual
         operatingSystem.fileSystem.FileSytemSimulator.currentDir = currentDir;
 
         return result;
@@ -213,12 +213,12 @@ public class MyKernel implements Kernel {
         String[] path = parameters.split("/");
     	Diretorio curDir = dirRaiz;
     	
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//localiza o diretório a ser removido
+    	//localiza o diretorio a ser removido
     	for(int i = 0; i < path.length; i++) {
     		if(path[i] == "") {
     			//caminho absoluto
@@ -230,7 +230,7 @@ public class MyKernel implements Kernel {
     			continue;
     		}
     		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretório não existe. (Nada foi removido)";
+    			result = "rmdir: Diretorio nao existe. (Nada foi removido)";
     			break;
     		}
     		else {
@@ -242,7 +242,7 @@ public class MyKernel implements Kernel {
 			curDir.getPai().getFilhos().remove(curDir);
 		}
 		else {
-			result = "rmdir: Diretório possui arquivos e/ou diretórios. (Nada foi removido)";
+			result = "rmdir: Diretorio possui arquivos e/ou diretorios. (Nada foi removido)";
 		}
     	
         return result;
@@ -259,12 +259,12 @@ public class MyKernel implements Kernel {
     	Arquivo arqOrigem = null;
     	String nomeArq = null;
     	
-    	//passa diretório atual para origem
+    	//passa diretorio atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
     		dirOrigem = dirOrigem.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//encontra diretório de origem pelo parâmetro
+    	//encontra diretorio de origem pelo parametro
     	for(int i = 0; i < origem.length; i++) {
     		if(origem[i] == "") {
     			//caminho absoluto
@@ -276,7 +276,7 @@ public class MyKernel implements Kernel {
     				arqOrigem = dirOrigem.buscaArquivoPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Arquivo origem não existe. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: Arquivo origem nao existe. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     		else {
@@ -284,17 +284,17 @@ public class MyKernel implements Kernel {
     				dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     	}
     	
-    	//passa diretório atual para destino
+    	//passa diretorio atual para destino
     	for(int i = 1; i < currentDir.length; i++) {
     		dirDestino = dirDestino.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//encontra diretório de destino pelo parâmetro
+    	//encontra diretorio de destino pelo parametro
     	for(int i = 0; i < destino.length; i++) {
     		if(destino[i] == "") {
     			//caminho absoluto
@@ -306,7 +306,7 @@ public class MyKernel implements Kernel {
     				nomeArq = destino[i]; 
     			}
     			else {
-    				return result = "mv: nome ja existente. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: nome ja existente. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     		else {
@@ -318,7 +318,7 @@ public class MyKernel implements Kernel {
     					dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]);
         			}
         			else {
-        				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+        				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
         			}
     			}
     		}
@@ -343,11 +343,11 @@ public class MyKernel implements Kernel {
     	}
     	else {
     		if(dirOrigem == dirDestino) {
-        		//renomeia diretório
+        		//renomeia diretorio
         		dirOrigem.setNome(destino[destino.length-1]);
         	}
         	else {
-        		//copia diretório
+        		//copia diretorio
         	    try {
                     Diretorio cloneDir = (Diretorio) dirOrigem.clone();
                     cloneDir.setPai(dirDestino);
@@ -374,12 +374,12 @@ public class MyKernel implements Kernel {
     	Arquivo arqAux = null;
     	String nomeArq = null;
     	
-    	//passa diretório atual para origem
+    	//passa diretorio atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
     		dirOrigem = dirOrigem.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//encontra diretório de origem pelo parâmetro
+    	//encontra diretorio de origem pelo parametro
     	for(int i = 0; i < origem.length; i++) {
     		if(origem[i] == "") {
     			//caminho absoluto
@@ -391,7 +391,7 @@ public class MyKernel implements Kernel {
     				arqOrigem = dirOrigem.buscaArquivoPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Arquivo origem não existe. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: Arquivo origem nao existe. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     		else {
@@ -399,17 +399,17 @@ public class MyKernel implements Kernel {
     				dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     	}
     	
-    	//passa diretório atual para destino
+    	//passa diretorio atual para destino
     	for(int i = 1; i < currentDir.length; i++) {
     		dirDestino = dirDestino.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//encontra diretório de destino pelo parâmetro
+    	//encontra diretorio de destino pelo parametro
     	for(int i = 0; i < destino.length; i++) {
     		if(destino[i] == "") {
     			//caminho absoluto
@@ -421,7 +421,7 @@ public class MyKernel implements Kernel {
     				nomeArq = destino[i]; 
     			}
     			else {
-    				return result = "mv: nome ja existente. (Nenhuma alteração foi efetuada)";
+    				return result = "mv: nome ja existente. (Nenhuma alteracao foi efetuada)";
     			}
     		}
     		else {
@@ -433,7 +433,7 @@ public class MyKernel implements Kernel {
     					dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]);
         			}
         			else {
-        				return result = "mv: Diretorio origem não existe. (Nenhuma alteração foi efetuada)";
+        				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
         			}
     			}
     		}
@@ -483,12 +483,12 @@ public class MyKernel implements Kernel {
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean removeDirMode = false;
-        if (in[0].equals("-R") || in[0].equals("-r")) removeDirMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+        if (in[0].equals("-R") || in[0].equals("-r")) removeDirMode = true; // usamos a posicao 0 porque o -R so pode aparecer nesta posicao
     	
-        //verifica parâmetros
+        //verifica parametros
     	path = in[in.length-1].split("/");
         
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
@@ -511,24 +511,24 @@ public class MyKernel implements Kernel {
         			}
         		}
         		else {
-        			return result = "rm: Arquivo não existe (Nenhum arquivo ou diretório foi removido)";
+        			return result = "rm: Arquivo nao existe (Nenhum arquivo ou diretorio foi removido)";
         		}
             } 
         	else if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
         		curDir = curDir.buscaDiretorioPeloNome(path[i]);
         		if(i == path.length - 1) {
         			if(removeDirMode) {
-        				//remove diretório e todo seu conteúdo, caso flag ativada
+        				//remove diretorio e todo seu conteudo, caso flag ativada
         				curDir.getPai().getFilhos().remove(curDir);
             			break;
         			}
         			else {
-        				return result = "rm: " + path[i] + ": é um diretorio (Nenhum arquivo ou diretório foi removido)";
+        				return result = "rm: " + path[i] + ": e um diretorio (Nenhum arquivo ou diretorio foi removido)";
         			}
         		}
         	}
         	else {
-        		return result = "rm: Diretório nao existe (Nenhum arquivo ou diretório foi removido)";
+        		return result = "rm: Diretorio nao existe (Nenhum arquivo ou diretorio foi removido)";
         	}
         }
     	return result;
@@ -546,12 +546,12 @@ public class MyKernel implements Kernel {
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean recursiveMode = false;
-        if (in[0].equals("-R") || in[0].equals("-r")) recursiveMode = true; // usamos a posição 0 porque o -R só pode aparecer nesta posição
+        if (in[0].equals("-R") || in[0].equals("-r")) recursiveMode = true; // usamos a posicao 0 porque o -R so pode aparecer nesta posicao
     	
-        //verifica parâmetros
+        //verifica parametros
     	path = in[in.length-1].split("/");
         
-    	//encontra o diretório atual
+    	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
@@ -566,7 +566,7 @@ public class MyKernel implements Kernel {
         	else if (path[i].matches(regexArq)) {
         		//arquivo localizado
         		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
-        			//para mudar permissão do arquivo
+        			//para mudar permissao do arquivo
         			for(int j = 0; j < curDir.getArquivos().size(); j++) {
         				if(curDir.getArquivos().get(j).getNome().equals(path[i])) {
         					oldPer = curDir.getArquivos().get(j).getPermissao();
@@ -575,19 +575,19 @@ public class MyKernel implements Kernel {
         			objeto = "arq";
         		}
         		else {
-        			return result = "chmod: Arquivo não existe. (Nada foi alterado)";
+        			return result = "chmod: Arquivo nao existe. (Nada foi alterado)";
         		}
             } 
         	else if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
         		curDir = curDir.buscaDiretorioPeloNome(path[i]);
         		if(i == path.length - 1) {
-    				//para mudar permissão do diretório
+    				//para mudar permissao do diretorio
     				oldPer = curDir.getPermissao();
     				objeto = "dir";
         		}
         	}
         	else {
-        		return result = "chmod: Diretório não existe. (Nada foi alterado)";
+        		return result = "chmod: Diretorio nao existe. (Nada foi alterado)";
         	}
         }
     	
@@ -600,7 +600,7 @@ public class MyKernel implements Kernel {
 		digits[1] = Character.digit(newMod.charAt(1), 10);
 		digits[2] = Character.digit(newMod.charAt(2), 10);
 		
-		//seta nova permissão
+		//seta nova permissao
 		for(int i = 0; i < 3; i++) {
 			if((digits[i] & READ) == READ){
     			newPer = newPer.concat("r");
@@ -629,12 +629,12 @@ public class MyKernel implements Kernel {
 				}
 			}
 			if(recursiveMode) {
-				return result = "chmod: Não é possível aplicar recursividade na permissão de arquivos (Somente permissão do arquivo alterada)";
+				return result = "chmod: Nao e possivel aplicar recursividade na permissão de arquivos (Somente permissao do arquivo alterada)";
 			}
 		}
 		else {
 			curDir.setPermissao(newPer);
-			//seta nova permissão recursivamente
+			//seta nova permissao recursivamente
 			if (recursiveMode) {
 	    		for (int i = 0; i < curDir.getFilhos().size(); i++) {
 	    			curDir.getFilhos().get(i).setPermissao(newPer);
@@ -657,7 +657,7 @@ public class MyKernel implements Kernel {
         String path[] = param[0].split("/");
         String content = param[1];
         
-        //encontra o diretório atual
+        //encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
@@ -672,7 +672,7 @@ public class MyKernel implements Kernel {
         	else if (path[i].matches(regexArq)) {
         		//arquivo localizado
         		if(curDir.buscaArquivoPeloNome(path[i]) != null) {
-        			return result = "createfile: Arquivo já existe. Não foi possível cria-lo";
+        			return result = "createfile: Arquivo ja existe. Nao foi possivel cria-lo";
         		}
         		else {
         			curDir.criaArquivo(path[i], curDir, content);
@@ -680,7 +680,7 @@ public class MyKernel implements Kernel {
             } 
         	else {
         		if(curDir.buscaDiretorioPeloNome(path[i]) == null) {
-        			return result = "createfile: Diretorio nao existe. Não foi possível criar arquivo";
+        			return result = "createfile: Diretorio nao existe. Nao foi possivel criar arquivo";
         		}
         		curDir = curDir.buscaDiretorioPeloNome(path[i]);
         	}
@@ -695,12 +695,12 @@ public class MyKernel implements Kernel {
         Diretorio curDir = dirRaiz;
         String[] path = parameters.split("/");
         
-        //encontra o diretório atual
+        //encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
-    	//verifica e imprime conteúdo do arquivo
+    	//verifica e imprime conteudo do arquivo
         for(int i = 0; i < path.length; i++) {
         	if(path[i] == "") {
     			//caminho absoluto
@@ -717,7 +717,7 @@ public class MyKernel implements Kernel {
         			}
         		}
         		else {
-        			return result = "cat: Arquivo não existe.";
+        			return result = "cat: Arquivo nao existe.";
         		}
             } 
         	else {
@@ -737,7 +737,7 @@ public class MyKernel implements Kernel {
        
         //verifica leitura do arquivo
         if (file == null) {
-        	return result = "Arquivo não existe.";
+        	return result = "Arquivo nao existe.";
         }
         
         //executa comandos do arquivo
@@ -805,7 +805,7 @@ public class MyKernel implements Kernel {
         //FileManager.writer(parameters, result);
         FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", result);
         
-        //chama função recursiva
+        //chama funcao recursiva
         recursiveDump(curDir, "", pilha);
         
         int pilhaSize = pilha.size();
@@ -823,17 +823,17 @@ public class MyKernel implements Kernel {
     	 String textCom = "";
          String textPer = "";
     	
-    	//condição de parada da recursão
+    	//condicao de parada da recursao
     	if(node == null ) {
     		return;
     	}
     	
     	curPath += node.getNome();
     	
-    	//verifica se o diretório atual tem arquivos
+    	//verifica se o diretorio atual tem arquivos
     	if(!node.getArquivos().isEmpty()) {
     		for(Arquivo arq : node.getArquivos()) {
-            	//verifica permissão do arquivo
+            	//verifica permissao do arquivo
             	if(!arq.getPermissao().equals("-rw-r--r--")) {
             		String auxPer = arq.getPermissao();
             		String per = "";
@@ -868,9 +868,9 @@ public class MyKernel implements Kernel {
     		}
     	}
     	
-    	//verifica se o diretório atual tem diretórios filhos
+    	//verifica se o diretorio atual tem diretorios filhos
     	if(node.getFilhos().isEmpty()) {
-        	//verifica permissão do diretório
+        	//verifica permissao do diretorio
         	if(!node.getPermissao().equals("drwxr-xr-x")) {
         		String auxPer = node.getPermissao();
         		String per = "";
@@ -895,7 +895,7 @@ public class MyKernel implements Kernel {
         		pilha.push(textPer);
         	}
         	
-        	//cria diretório filho
+        	//cria diretorio filho
     		textCom = "mkdir " + curPath;
     		//textCom = "mkdir " + curPath + "/" + node.getNome();
     		pilha.push(textCom);
@@ -904,7 +904,7 @@ public class MyKernel implements Kernel {
     		curPath += "/";
     	}
     	
-    	//percorre o sistema de arquivos com recursão
+    	//percorre o sistema de arquivos com recursao
     	for(int i = 0; i < node.getFilhos().size(); i++) {
     		recursiveDump(node.getFilhos().get(i), curPath, pilha);
     	}
