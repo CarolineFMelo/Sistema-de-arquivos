@@ -252,12 +252,21 @@ public class MyKernel implements Kernel {
     	String result = "";
         String[] in = parameters.split(" ");
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
-    	String[] origem = in[0].split("/");
-    	String[] destino = in[1].split("/");
+    	String[] origem = null;
+    	String[] destino = null;
     	Diretorio dirOrigem = dirRaiz;
     	Diretorio dirDestino = dirRaiz;
     	Arquivo arqOrigem = null;
     	String nomeArq = null;
+    	String nomeDir = null;
+    	
+    	//seta flags opcionais - modificam o fluxo do programa
+        boolean dirMode = false;
+        if (in[0].equals("-R") || in[0].equals("-r")) dirMode = true; // usamos a posicao 0 porque o -R so pode aparecer nesta posicao
+    	
+        //verifica parametros
+    	origem = in[in.length-2].split("/");
+    	destino = in[in.length-1].split("/");
     	
     	//passa diretorio atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
@@ -276,15 +285,20 @@ public class MyKernel implements Kernel {
     				arqOrigem = dirOrigem.buscaArquivoPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Arquivo origem nao existe. (Nenhuma alteracao foi efetuada)";
+    				return result = "cp: O arquivo não existe. (Nada foi copiado)";
     			}
     		}
     		else {
     			if(dirOrigem.buscaDiretorioPeloNome(origem[i]) != null) {
+    				if(i == origem.length-1) {
+        				if(dirMode == false) {
+        					return result = "cp: Flag desativada. (Nenhum diretorio foi copiado)";
+        				}
+        			}
     				dirOrigem = dirOrigem.buscaDiretorioPeloNome(origem[i]);
     			}
     			else {
-    				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
+    				return result = "cp: O diretorio de origem não existe. (Nada foi copiado)";
     			}
     		}
     	}
@@ -305,9 +319,6 @@ public class MyKernel implements Kernel {
     			if(dirDestino.buscaArquivoPeloNome(destino[i]) == null) {
     				nomeArq = destino[i]; 
     			}
-    			else {
-    				return result = "mv: nome ja existente. (Nenhuma alteracao foi efetuada)";
-    			}
     		}
     		else {
     			if(dirDestino.buscaDiretorioPeloNome(destino[i]) != null) {
@@ -315,47 +326,43 @@ public class MyKernel implements Kernel {
     			}
     			else {
     				if(i == destino.length - 1) {
-    					dirDestino = dirDestino.buscaDiretorioPeloNome(origem[origem.length-1]);
+    					if(dirMode == true) {
+    						nomeDir = destino[i];
+    					}
         			}
         			else {
-        				return result = "mv: Diretorio origem nao existe. (Nenhuma alteracao foi efetuada)";
+        				return result = "cp: O diretorio de destino não existe. (Nada foi copiado)";
         			}
     			}
     		}
     	}
     	
-    	//remove ou move objetos
+    	//copia objetos
     	if(arqOrigem != null) {
-    		if(nomeArq != null) {
-        		//renomeia arquivo
-        		arqOrigem.setNome(nomeArq);
-        	}
-    		else {
-    			//copia arquivo
-    			 try {
-                     Arquivo cloneArq = (Arquivo) arqOrigem.clone();
-                     cloneArq.setDirPai(dirDestino);
-                     dirDestino.getArquivos().add(cloneArq);
-                 } catch (CloneNotSupportedException e) {
-                     return result = "Erro ao copiar arquivo";
-                 }
-    		}
+    		//copia arquivo
+    		try {
+                Arquivo cloneArq = (Arquivo) arqOrigem.clone();
+                cloneArq.setDirPai(dirDestino);
+                if(nomeArq != null) {
+                	cloneArq.setNome(nomeArq);
+                }
+                dirDestino.getArquivos().add(cloneArq);
+    		} catch (CloneNotSupportedException e) {
+                return result = "Erro ao copiar arquivo";
+            }
     	}
     	else {
-    		if(dirOrigem == dirDestino) {
-        		//renomeia diretorio
-        		dirOrigem.setNome(destino[destino.length-1]);
-        	}
-        	else {
-        		//copia diretorio
-        	    try {
-                    Diretorio cloneDir = (Diretorio) dirOrigem.clone();
-                    cloneDir.setPai(dirDestino);
-                    dirDestino.getFilhos().add(cloneDir);
-                } catch (CloneNotSupportedException e) {
-                    return result = "Erro ao copiar diretorio";
-                }
-        	}
+    		//copia diretorio
+        	try {
+	            Diretorio cloneDir = (Diretorio) dirOrigem.clone();
+	            cloneDir.setPai(dirDestino);
+	            if(nomeDir != null) {
+		            cloneDir.setNome(nomeDir);
+	            }
+	            dirDestino.getFilhos().add(cloneDir);
+            } catch (CloneNotSupportedException e) {
+            	return result = "Erro ao copiar diretorio";
+            }
     	}
     	
         return result;

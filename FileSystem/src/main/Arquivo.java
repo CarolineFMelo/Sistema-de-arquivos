@@ -1,7 +1,6 @@
 package main;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Arquivo implements Cloneable {
