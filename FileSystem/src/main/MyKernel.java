@@ -801,6 +801,7 @@ public class MyKernel implements Kernel {
         Diretorio curDir = dirRaiz;
         Stack<String> pilha = new Stack<String>();
         
+        //cria e abre arquivo de dump
         //FileManager.writer(parameters, result);
         FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", result);
         
@@ -808,7 +809,7 @@ public class MyKernel implements Kernel {
         recursiveDump(curDir, "", pilha);
         
         int pilhaSize = pilha.size();
-        
+        //desempilha os comandos e escreve no arquivo de dump
         for(int i = 0; i < pilhaSize; i++) {
         	//FileManager.writerAppend(parameters, pilha.pop() + "\n");
 			FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", pilha.pop() + "\n");
@@ -832,16 +833,6 @@ public class MyKernel implements Kernel {
     	//verifica se o diretório atual tem arquivos
     	if(!node.getArquivos().isEmpty()) {
     		for(Arquivo arq : node.getArquivos()) {
-    			
-    			//cria arquivo
-    			if(curPath.equals("/")) {
-    				textCom = "createfile " + curPath + arq.getNome() + " " + arq.getConteudo();
-    			}
-    			else {
-    				textCom = "createfile " + curPath + "/" + arq.getNome() + " " + arq.getConteudo();
-    			}
-    			pilha.push(textCom);
-    			
             	//verifica permissão do arquivo
             	if(!arq.getPermissao().equals("-rw-r--r--")) {
             		String auxPer = arq.getPermissao();
@@ -865,16 +856,20 @@ public class MyKernel implements Kernel {
             		textPer = "chmod " + per + " " + curPath + "/" + arq.getNome();
             		pilha.push(textPer);
             	}
+            	
+            	//cria arquivo
+    			if(curPath.equals("/")) {
+    				textCom = "createfile " + curPath + arq.getNome() + " " + arq.getConteudo();
+    			}
+    			else {
+    				textCom = "createfile " + curPath + "/" + arq.getNome() + " " + arq.getConteudo();
+    			}
+    			pilha.push(textCom);
     		}
     	}
     	
     	//verifica se o diretório atual tem diretórios filhos
     	if(node.getFilhos().isEmpty()) {
-    		
-    		//cria diretório filho
-    		textCom = "mkdir " + curPath + "/" + node.getNome();
-    		pilha.push(textCom);
-    		
         	//verifica permissão do diretório
         	if(!node.getPermissao().equals("drwxr-xr-x")) {
         		String auxPer = node.getPermissao();
@@ -895,9 +890,15 @@ public class MyKernel implements Kernel {
         		    per = per + cont;
         		    cont = 0;
         		}
-        		textPer = "chmod " + per + " " + curPath + "/" + node.getNome();
+        		textPer = "chmod " + per + " " + curPath;
+        		//textPer = "chmod " + per + " " + curPath + "/" + node.getNome();
         		pilha.push(textPer);
         	}
+        	
+        	//cria diretório filho
+    		textCom = "mkdir " + curPath;
+    		//textCom = "mkdir " + curPath + "/" + node.getNome();
+    		pilha.push(textCom);
 	    }
     	else if(!node.getNome().equals("/")) {
     		curPath += "/";
