@@ -1,5 +1,0 @@
-INDEX VERSION 1.132+C:\Users\cferr\workspace\6-periodo\sistemas_operacionais_II\ProjetoSistemaArquivos\.metadata\.plugins\org.eclipse.jdt.core
-1865797976.index
-1538186687.index
-2660995544.index
-2060957788.index
