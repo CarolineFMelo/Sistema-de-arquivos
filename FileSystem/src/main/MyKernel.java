@@ -95,8 +95,7 @@ public class MyKernel implements Kernel {
 		   		}
 	   		}
 	   		else {        			
-       			result = path[i].concat(": Diretorio nao existe.");
-	   			return result;
+       			return result = path[i].concat(": Diretorio nao existe.");
     		}
     		curDir = curDir.buscaDiretorioPeloNome(path[i]);
     	}
@@ -149,8 +148,7 @@ public class MyKernel implements Kernel {
     		}
     		if(curDir.buscaDiretorioPeloNome(path[i]) != null) {
 	    		if(i == path.length - 1) {
-	    			result = "mkdir: " + path[i] + ": Diretorio nao existe (Nenhum diretorio foi criado).";
-	    			break;
+	    			return result = "mkdir: " + path[i] + ": Diretorio nao existe (Nenhum diretorio foi criado).";
 	   			}
    			}
        		else {        			
@@ -190,8 +188,7 @@ public class MyKernel implements Kernel {
     			curDir = curDir.buscaDiretorioPeloNome(path[i]);
    			}
        		else {        			
-       			result = path[i].concat(": Diretorio nao existe.");
-	   			return result;
+       			return result = path[i].concat(": Diretorio nao existe.");
     		}
     	}
     	
@@ -252,7 +249,7 @@ public class MyKernel implements Kernel {
     		dirRemoved.getPai().getFilhos().remove(dirRemoved);
 		}
 		else {
-			result = "rmdir: Diretorio possui arquivos e/ou diretorios. (Nada foi removido)";
+			return result = "rmdir: Diretorio possui arquivos e/ou diretorios. (Nada foi removido)";
 		}
     	
         return result;
