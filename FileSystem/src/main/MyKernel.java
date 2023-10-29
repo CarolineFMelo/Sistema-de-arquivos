@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 import fileFunctions.FileManager;
@@ -638,9 +639,14 @@ public class MyKernel implements Kernel {
 		int digits[] = new int[3];
 		int READ = 4, WRITE = 2, EXECUTE = 1;
 		
-		digits[0] = Character.digit(newMod.charAt(0), 10);
-		digits[1] = Character.digit(newMod.charAt(1), 10);
-		digits[2] = Character.digit(newMod.charAt(2), 10);
+		for(int i = 0; i < 3; i++) {
+			if(Character.digit(newMod.charAt(i), 10) <= 7) {
+				digits[i] = Character.digit(newMod.charAt(i), 10);
+			}
+			else {
+				return result = "permissao invalida";
+			}
+		}
 		
 		//seta nova permissao
 		for(int i = 0; i < 3; i++) {
@@ -671,7 +677,7 @@ public class MyKernel implements Kernel {
 				}
 			}
 			if(recursiveMode) {
-				return result = "chmod: Nao e possivel aplicar recursividade na permissão de arquivos (Somente permissao do arquivo alterada)";
+				return result = "chmod: Nao e possivel aplicar recursividade na permissao de arquivos (Somente permissao do arquivo alterada)";
 			}
 		}
 		else {
