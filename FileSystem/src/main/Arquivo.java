@@ -19,7 +19,7 @@ public class Arquivo implements Cloneable {
 		this.dataCriacao 
         	= new Date(System.currentTimeMillis());
 		SimpleDateFormat sdf 
-        	= new SimpleDateFormat("MM dd HH:mm:ss");
+        	= new SimpleDateFormat("MM dd HH:mm");
 		this.dataCriacaoFormatada 
         	= sdf.format(dataCriacao);
 		this.conteudo = conteudo;

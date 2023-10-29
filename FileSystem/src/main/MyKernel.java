@@ -105,11 +105,13 @@ public class MyKernel implements Kernel {
 	    if(listMode) {
      		for(int i = 0; i < curDir.getFilhos().size(); i++) {
      			result = result.concat(curDir.getFilhos().get(i).getPermissao() + " " +
+     					"carol" + " " +
      					curDir.getFilhos().get(i).getDataCriacaoFormatada() + " " +
      					curDir.getFilhos().get(i).getNome() + "\n");
          	}
      		for(int i = 0; i < curDir.getArquivos().size(); i++) {
      			result = result.concat(curDir.getArquivos().get(i).getPermissao() + " " +
+     					"carol" + " " +
      					curDir.getArquivos().get(i).getDataCriacaoFormatada() + " " +
      					curDir.getArquivos().get(i).getNome() + "\n");
          	}
