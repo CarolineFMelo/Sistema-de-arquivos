@@ -494,6 +494,7 @@ public class MyKernel implements Kernel {
         String[] in = parameters.split(" ");
         String[] path;
     	Diretorio curDir = dirRaiz;
+    	Diretorio auxDir = dirRaiz;
     	
     	//seta flags opcionais - modificam o fluxo do programa
         boolean removeDirMode = false;
@@ -505,6 +506,7 @@ public class MyKernel implements Kernel {
     	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    		auxDir = auxDir.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
     	//localiza o objeto a ser alterado
@@ -532,6 +534,14 @@ public class MyKernel implements Kernel {
         		curDir = curDir.buscaDiretorioPeloNome(path[i]);
         		if(i == path.length - 1) {
         			if(removeDirMode) {
+        				if(auxDir == curDir) {
+        		    		if(curDir.getPai().equals(dirRaiz)) {
+        		    			cd("");
+        		    		}
+        		    		else {
+        		    			cd(getCaminhoCompleto(curDir.getPai()));
+        		    		}
+        		    	}
         				//remove diretorio e todo seu conteudo, caso flag ativada
         				curDir.getPai().getFilhos().remove(curDir);
             			break;
