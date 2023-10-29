@@ -381,12 +381,18 @@ public class MyKernel implements Kernel {
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
     	String[] origem = in[0].split("/");
     	String[] destino = in[1].split("/");
+    	Diretorio curDir = dirRaiz;
     	Diretorio dirOrigem = dirRaiz;
     	Diretorio dirDestino = dirRaiz;
     	Diretorio dirAux = null;
     	Arquivo arqOrigem = null;
     	Arquivo arqAux = null;
     	String nomeArq = null;
+    	
+    	//pega diretorio atual
+    	for(int i = 1; i < currentDir.length; i++) {
+    		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    	}
     	
     	//passa diretorio atual para origem
     	for(int i = 1; i < currentDir.length; i++) {
@@ -471,11 +477,23 @@ public class MyKernel implements Kernel {
     	}
     	else {
     		if(dirOrigem == dirDestino) {
-        		//renomeia diretório
+    			Diretorio aux = dirOrigem;
+        		//renomeia diretorio
         		dirOrigem.setNome(destino[destino.length-1]);
+        		if(aux == curDir) {
+		    		cd(getCaminhoCompleto(dirOrigem));
+		    	}
         	}
         	else {
-        		//move diretório
+        		if(dirOrigem == curDir) {
+		    		if(curDir.getPai().equals(dirRaiz)) {
+		    			cd("");
+		    		}
+		    		else {
+		    			cd(getCaminhoCompleto(curDir.getPai()));
+		    		}
+		    	}
+        		//move diretorio
         		for(int i = 0; i < dirOrigem.getPai().getFilhos().size(); i++) {
             		if(dirOrigem.getPai().getFilhos().get(i) == dirOrigem) {
             			dirAux = dirOrigem.getPai().getFilhos().remove(i);
