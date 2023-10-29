@@ -212,34 +212,44 @@ public class MyKernel implements Kernel {
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
         String[] path = parameters.split("/");
     	Diretorio curDir = dirRaiz;
+    	Diretorio dirRemoved = dirRaiz;
     	
     	//encontra o diretorio atual
     	for(int i = 1; i < currentDir.length; i++) {
     		curDir = curDir.buscaDiretorioPeloNome(currentDir[i]);
+    		dirRemoved = dirRemoved.buscaDiretorioPeloNome(currentDir[i]);
     	}
     	
     	//localiza o diretorio a ser removido
     	for(int i = 0; i < path.length; i++) {
     		if(path[i] == "") {
     			//caminho absoluto
-    			curDir = dirRaiz;
+    			dirRemoved = dirRaiz;
     			continue;
     		}
     		if(path[i].contains(".")) {
-    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    			dirRemoved = dirRemoved.buscaDiretorioPeloNome(path[i]);
     			continue;
     		}
-    		else if (curDir.buscaDiretorioPeloNome(path[i]) == null) {
-    			result = "rmdir: Diretorio nao existe. (Nada foi removido)";
-    			break;
+    		else if (dirRemoved.buscaDiretorioPeloNome(path[i]) == null) {
+    			return result = "rmdir: Diretorio nao existe. (Nada foi removido)";
     		}
     		else {
-    			curDir = curDir.buscaDiretorioPeloNome(path[i]);
+    			dirRemoved = dirRemoved.buscaDiretorioPeloNome(path[i]);
     		}
     	}
     	
-    	if(curDir.getFilhos().isEmpty() && curDir.getArquivos().isEmpty()) {
-			curDir.getPai().getFilhos().remove(curDir);
+    	if(dirRemoved == curDir) {
+    		if(curDir.getPai().equals(dirRaiz)) {
+    			cd("");
+    		}
+    		else {
+    			cd(getCaminhoCompleto(curDir.getPai()));
+    		}
+    	}
+    	
+    	if(dirRemoved.getFilhos().isEmpty() && dirRemoved.getArquivos().isEmpty()) {
+    		dirRemoved.getPai().getFilhos().remove(dirRemoved);
 		}
 		else {
 			result = "rmdir: Diretorio possui arquivos e/ou diretorios. (Nada foi removido)";
