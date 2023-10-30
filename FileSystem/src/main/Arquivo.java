@@ -30,6 +30,18 @@ public class Arquivo implements Cloneable {
 		return (Arquivo) super.clone();
 	}
 	
+	public long salvaArquivoDisco() {
+		int estado = 1 * 8;
+    	int nome = 86 * 8;
+    	int pai = 10 * 8;
+    	int data = 12 * 8;
+    	int permissao = 3 * 8;
+    	int conteudo = 400 * 8;
+    	long bitsTotais = estado + nome + pai + data + permissao + conteudo;
+    	
+    	return bitsTotais;
+	}
+	
 	public Diretorio getDirPai() {
 		return dirPai;
 	}

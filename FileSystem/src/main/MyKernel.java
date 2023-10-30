@@ -38,6 +38,7 @@ public class MyKernel implements Kernel {
     	}
     }
     
+    
     //pega o caminho completo do path
     String getCaminhoCompleto(Diretorio dir) {
     	Stack<String> pilha = new Stack<String>();
@@ -52,6 +53,7 @@ public class MyKernel implements Kernel {
     	}
     	return caminho;
     }
+    
 
     public String ls(String parameters) {
     	String result = "";
@@ -100,7 +102,7 @@ public class MyKernel implements Kernel {
     		}
     		curDir = curDir.buscaDiretorioPeloNome(path[i]);
     	}
-     	
+	    
      	//lista conteudo do diretorio
 	    if(listMode) {
      		for(int i = 0; i < curDir.getFilhos().size(); i++) {
@@ -126,6 +128,7 @@ public class MyKernel implements Kernel {
      	
         return result;
     }
+    
 
     public String mkdir(String parameters) {
     	String result = "";
@@ -206,6 +209,7 @@ public class MyKernel implements Kernel {
 
         return result;
     }
+    
 
     public String rmdir(String parameters) {
         String result = "";
@@ -257,6 +261,7 @@ public class MyKernel implements Kernel {
     	
         return result;
     }
+    
 
     public String cp(String parameters) {
     	String result = "";
@@ -378,6 +383,7 @@ public class MyKernel implements Kernel {
         return result;
     }
 
+    
     public String mv(String parameters) {
         String result = "";
         String[] in = parameters.split(" ");
@@ -509,6 +515,7 @@ public class MyKernel implements Kernel {
         return result;
     }
 
+    
     public String rm(String parameters) {
         String result = "";
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -579,6 +586,7 @@ public class MyKernel implements Kernel {
     	return result;
     }
 
+    
     public String chmod(String parameters) {
         String result = "";
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -699,6 +707,7 @@ public class MyKernel implements Kernel {
         return result;
     }
 
+    
     public String createfile(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -739,6 +748,7 @@ public class MyKernel implements Kernel {
         return result;
     }
 
+    
     public String cat(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -778,6 +788,7 @@ public class MyKernel implements Kernel {
         return result;
     }
 
+    
     public String batch(String parameters) {
         String result = "";
         
@@ -846,6 +857,7 @@ public class MyKernel implements Kernel {
         return result = "Comandos executados.";
     }
 
+    
     public String dump(String parameters) {
         String result = "";
         Diretorio curDir = dirRaiz;
@@ -869,6 +881,7 @@ public class MyKernel implements Kernel {
     }
     
     //percorre o sistema de arquivos e monta o dump
+    
     public void recursiveDump(Diretorio node, String curPath, Stack<String> pilha) {
     	 String textCom = "";
          String textPer = "";
@@ -941,13 +954,11 @@ public class MyKernel implements Kernel {
         		    cont = 0;
         		}
         		textPer = "chmod " + per + " " + curPath;
-        		//textPer = "chmod " + per + " " + curPath + "/" + node.getNome();
         		pilha.push(textPer);
         	}
         	
         	//cria diretorio filho
     		textCom = "mkdir " + curPath;
-    		//textCom = "mkdir " + curPath + "/" + node.getNome();
     		pilha.push(textCom);
 	    }
     	else if(!node.getNome().equals("/")) {
@@ -961,6 +972,7 @@ public class MyKernel implements Kernel {
     	
     }
 
+    
     public String info() {
     	String result = "";
         //nome do aluno

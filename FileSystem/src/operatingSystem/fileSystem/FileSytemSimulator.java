@@ -44,11 +44,11 @@ public class FileSytemSimulator extends javax.swing.JFrame {
 
         txtCommand.setBackground(new java.awt.Color(0, 0, 0));
         txtCommand.setFont(new java.awt.Font("Courier New", 0, 14));
-        txtCommand.setForeground(new java.awt.Color(255, 255, 255));
+        txtCommand.setForeground(new java.awt.Color(255,192,203));
         txtCommand.setText("carol@localhost:~$");
-        txtCommand.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtCommand.setCaretColor(new java.awt.Color(255,192,203));
         txtCommand.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtCommand.setSelectedTextColor(new java.awt.Color(255, 255, 255));
+        txtCommand.setSelectedTextColor(new java.awt.Color(255,255,255));
         txtCommand.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtCommandKeyPressed(evt);
@@ -62,7 +62,7 @@ public class FileSytemSimulator extends javax.swing.JFrame {
         textArea.setColumns(20);
         textArea.setEditable(false);
         textArea.setFont(new java.awt.Font("Courier New", 0, 14));
-        textArea.setForeground(new java.awt.Color(255, 255, 255));
+        textArea.setForeground(new java.awt.Color(173,216,230));
         textArea.setRows(5);
         textArea.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(textArea);
@@ -117,10 +117,32 @@ public class FileSytemSimulator extends javax.swing.JFrame {
         		this.escreverDiretorio();
         		this.txtCommand.setText(this.txtCommand.getText().concat(this.listOfCommands.get(++position)));
         	}
-      }
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_U && ((evt.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)){
+            commandClipboard = this.txtCommand.getText().substring((this.base.length()+FileSytemSimulator.currentDir.length()+2), this.txtCommand.getText().length());
+            this.txtCommand.setText("");
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_W && ((evt.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)){
+            String command = this.txtCommand.getText();
+            commandClipboard = command.substring(command.lastIndexOf(" "), command.length()).trim();
+            this.txtCommand.setText(command.substring(0, command.lastIndexOf(" ")));
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_Y && ((evt.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)){
+            this.txtCommand.setText(this.txtCommand.getText().concat(commandClipboard));
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_L && ((evt.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)){
+            this.textArea.setText("");
+            this.escreverDiretorio();
+        }
+        if(evt.getKeyCode() == KeyEvent.VK_D && ((evt.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)){
+            if (this.txtCommand.getText().substring((this.base.length()+FileSytemSimulator.currentDir.length()+2), this.txtCommand.getText().length()).equals("")) {
+                this.textArea.setText("logout");
+                this.escreverDiretorio();
+                System.exit(0);
+            }
+        } 
         
-        
-}//GEN-LAST:event_txtCommandKeyPressed
+    }//GEN-LAST:event_txtCommandKeyPressed
 
     private void txtCommandKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCommandKeyReleased
         if( this.txtCommand.getText().length() <= (this.base.length()+FileSytemSimulator.currentDir.length()+2) || this.txtCommand.getText().length() == 0 ){
@@ -142,6 +164,7 @@ public class FileSytemSimulator extends javax.swing.JFrame {
   
     private String lastCommand = "";
     private ArrayList<String> listOfCommands = new ArrayList<String>();
+    private String commandClipboard = "";
     private int position;
     private String lastResult = "";
     private String base = "";
@@ -244,10 +267,38 @@ public class FileSytemSimulator extends javax.swing.JFrame {
                 else
                     this.lastResult = this.myKernel.dump("");
             }
+            //se comando for info
             else if( args[0].equals("info") ){
                 this.lastResult = this.myKernel.info();
-            }   
-            //se o comando não é reconhecido
+            }
+            //se comando for exit
+            else if( args[0].equals("exit")){
+                System.exit(0);
+            }
+            //se comando for clear
+            else if(args[0].equals("clear")) {
+            	this.textArea.setText("");
+            	this.lastCommand = "";
+            }
+            //se comando for help
+            else if(args[0].equals("help")) {
+            	this.lastResult = "batch: funcao para executar um arquivo em lote\n" +
+            					"dump: funcao para exportar estrutura para arquivo texto\n" +
+            					"cat: funcao para imprimir o conte�do do arquivo\n" +
+           						"cd: funcao para navegacao entre diretorios\n" +
+   								"chmod: funcao para definir permissao de arquivos e diretorios\n" +
+            					"cp: funcao para copiar arquivos e diretorios\n" +
+            					"createfile: funcao para criar arquivos\n" +
+          						"info(): funcao para indicar informacoes do simulador\n" +
+  								"ls: funcao para listar diretorios e arquivos\n" +
+            					"mkdir: funcao para criar diretorio\n" +
+            					"mv: funcao para mover arquivos e diretorios\n" +
+            					"rm: funcao para remover arquivos e diretorios\n" +
+           						"rmdir: funcao para remover diretorio vazio\n" +
+            					"clear: funcao para limpar a tela\n" +
+           						"exit: funcao para encerrar a execucao";
+            }
+            //se o comando nao e reconhecido
             else{
                 this.lastResult = comando + ": Comando invalido.";
             }

@@ -49,6 +49,19 @@ public class Diretorio implements Cloneable {
     public void criaArquivo(String nome, Diretorio pai, String conteudo) {
 	    this.arquivos.add(new Arquivo(nome, pai, conteudo));
 	}
+    
+    public long salvaDiretorioDisco() {
+    	int estado = 1 * 8;
+    	int nome = 86 * 8;
+    	int pai = 10 * 8;
+    	int data = 12 * 8;
+    	int permissao = 3 * 8;
+    	int filhos = 200 * 8;
+    	int arquivos = 200 * 8;
+    	long bitsTotais = estado + nome + pai + data + permissao + filhos + arquivos;
+    	
+    	return bitsTotais;
+    }
    
     public Diretorio buscaDiretorioPeloNome(String nome) {
         if (nome.equals(".")){
