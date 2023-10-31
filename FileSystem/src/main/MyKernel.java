@@ -54,7 +54,6 @@ public class MyKernel implements Kernel {
     	return caminho;
     }
     
-
     public String ls(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -129,7 +128,6 @@ public class MyKernel implements Kernel {
         return result;
     }
     
-
     public String mkdir(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -210,7 +208,6 @@ public class MyKernel implements Kernel {
         return result;
     }
     
-
     public String rmdir(String parameters) {
         String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -244,7 +241,7 @@ public class MyKernel implements Kernel {
     	}
     	
     	if(dirRemoved == curDir) {
-    		if(curDir.getPai().equals(dirRaiz)) {
+    		if(curDir.getPai().equals(dirRaiz)|| curDir.getPai() == null) {
     			cd("");
     		}
     		else {
@@ -262,7 +259,6 @@ public class MyKernel implements Kernel {
         return result;
     }
     
-
     public String cp(String parameters) {
     	String result = "";
         String[] in = parameters.split(" ");
@@ -383,7 +379,6 @@ public class MyKernel implements Kernel {
         return result;
     }
 
-    
     public String mv(String parameters) {
         String result = "";
         String[] in = parameters.split(" ");
@@ -495,7 +490,7 @@ public class MyKernel implements Kernel {
         	}
         	else {
         		if(dirOrigem == curDir) {
-		    		if(curDir.getPai().equals(dirRaiz)) {
+		    		if(curDir.getPai().equals(dirRaiz) || curDir.getPai() == null) {
 		    			cd("");
 		    		}
 		    		else {
@@ -515,7 +510,6 @@ public class MyKernel implements Kernel {
         return result;
     }
 
-    
     public String rm(String parameters) {
         String result = "";
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -563,7 +557,7 @@ public class MyKernel implements Kernel {
         		if(i == path.length - 1) {
         			if(removeDirMode) {
         				if(auxDir == curDir) {
-        		    		if(curDir.getPai().equals(dirRaiz)) {
+        		    		if(curDir.getPai() == dirRaiz || curDir.getPai() == null) {
         		    			cd("");
         		    		}
         		    		else {
@@ -586,7 +580,6 @@ public class MyKernel implements Kernel {
     	return result;
     }
 
-    
     public String chmod(String parameters) {
         String result = "";
     	String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -707,7 +700,6 @@ public class MyKernel implements Kernel {
         return result;
     }
 
-    
     public String createfile(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -748,7 +740,6 @@ public class MyKernel implements Kernel {
         return result;
     }
 
-    
     public String cat(String parameters) {
     	String result = "";
         String[] currentDir = operatingSystem.fileSystem.FileSytemSimulator.currentDir.split("/");
@@ -788,13 +779,11 @@ public class MyKernel implements Kernel {
         return result;
     }
 
-    
     public String batch(String parameters) {
         String result = "";
         
         //abre o arquivo
-        //ArrayList<String> arquivo = FileManager.stringReader(parameters);
-        ArrayList<String> file = FileManager.stringReader("C:\\Users\\cferr\\workspace\\comandos.txt");
+        ArrayList<String> file = FileManager.stringReader(parameters);
        
         //verifica leitura do arquivo
         if (file == null) {
@@ -857,15 +846,13 @@ public class MyKernel implements Kernel {
         return result = "Comandos executados.";
     }
 
-    
     public String dump(String parameters) {
         String result = "";
         Diretorio curDir = dirRaiz;
         Stack<String> pilha = new Stack<String>();
         
         //cria e abre arquivo de dump
-        //FileManager.writer(parameters, result);
-        FileManager.writer("C:\\Users\\cferr\\workspace\\dump.txt", result);
+        FileManager.writer(parameters, result);
         
         //chama funcao recursiva
         recursiveDump(curDir, "", pilha);
@@ -873,15 +860,13 @@ public class MyKernel implements Kernel {
         int pilhaSize = pilha.size();
         //desempilha os comandos e escreve no arquivo de dump
         for(int i = 0; i < pilhaSize; i++) {
-        	//FileManager.writerAppend(parameters, pilha.pop() + "\n");
-			FileManager.writerAppend("C:\\Users\\cferr\\workspace\\dump.txt", pilha.pop() + "\n");
+        	FileManager.writerAppend(parameters, pilha.pop() + "\n");
         }
         
         return result;
     }
-    
+
     //percorre o sistema de arquivos e monta o dump
-    
     public void recursiveDump(Diretorio node, String curPath, Stack<String> pilha) {
     	 String textCom = "";
          String textPer = "";
@@ -972,7 +957,6 @@ public class MyKernel implements Kernel {
     	
     }
 
-    
     public String info() {
     	String result = "";
         //nome do aluno
